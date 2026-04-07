@@ -53,14 +53,17 @@ export function LoadingState({ label = "Loading..." }: { label?: string }) {
 export function EmptyState({
   title,
   description,
+  icon: Icon,
 }: {
   title: string;
   description: string;
+  icon?: any;
 }) {
   return (
-    <div className="rounded-3xl border border-dashed border-gray-800 bg-gray-900/70 p-8 text-center">
+    <div className="rounded-3xl border border-dashed border-gray-800 bg-gray-900/70 p-8 text-center flex flex-col items-center justify-center">
+      {Icon && <Icon className="mb-4 h-12 w-12 text-gray-700" />}
       <h3 className="text-lg font-semibold text-white">{title}</h3>
-      <p className="mt-2 text-sm text-gray-400">{description}</p>
+      <p className="mt-2 text-sm text-gray-400 max-w-xs mx-auto">{description}</p>
     </div>
   );
 }

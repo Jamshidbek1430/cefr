@@ -205,6 +205,33 @@ class LiveStreamView(APIView):
         return Response({"embed_url": lesson.youtube_embed_url, "lesson_id": lesson.id})
 
 
+class ActiveLiveView(APIView):
+    """GET /api/live/ — returns the currently live lesson (or null)"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        print("[ActiveLiveView] GET /api/live/ hit")
+        # First try status=live
+        lesson = Lesson.objects.filter(status="live").first()
+        if not lesson:
+            # Fall back to nearest scheduled lesson within ±3 hours
+            lesson = _find_active_lesson()
+        if not lesson:
+            print("[ActiveLiveView] No live lesson found")
+            return Response(None, status=status.HTTP_200_OK)
+        print(f"[ActiveLiveView] Found lesson: {lesson.id} status={lesson.status} twitch={lesson.twitch_channel}")
+        return Response({
+            "id": lesson.id,
+            "title": lesson.title,
+            "status": lesson.status,
+            "is_live": lesson.is_live,
+            "twitch_channel": lesson.twitch_channel or "",
+            "youtube_embed_url": lesson.youtube_embed_url or "",
+            "hls_url": lesson.hls_url or "",
+            "daily_room_url": lesson.daily_room_url or "",
+        })
+
+
 class StartLiveLessonView(APIView):
     permission_classes = [IsAuthenticated]
 

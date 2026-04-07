@@ -15,6 +15,8 @@ from datetime import timedelta
 import os
 from urllib.parse import urlsplit
 from dotenv import load_dotenv
+from django.conf import settings
+from django.conf.urls.static import static
 
 # .env faylini yuklash
 load_dotenv()
@@ -56,6 +58,7 @@ ALLOWED_HOSTS = _env_list("ALLOWED_HOSTS", "localhost,127.0.0.1")
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "channels",
     'jazzmin',
     'django.contrib.admin',
@@ -82,7 +85,7 @@ INSTALLED_APPS = [
     "apps.courses",
     "apps.attendance",
     "apps.system",
-
+    "apps.videos",
     # Swagger
     "drf_yasg",
 ]
@@ -280,7 +283,8 @@ if not DEBUG:
     CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")
     CSP_IMG_SRC = ("'self'", "data:")
     CSP_CONNECT_SRC = ("'self'", "wss://*", "https://*")
-    CSP_FRAME_SRC = ("'self'",)
+    CSP_FRAME_SRC = ("'self'", "http://localhost:*", "https://localhost:*", "blob:")
+    CSP_OBJECT_SRC = ("'self'", "blob:")
     
     # WebSocket secure settings
     # CHANNEL_LAYERS = {
@@ -303,3 +307,5 @@ else:
             "http://localhost:3000",
             "http://127.0.0.1:3000",
         ]
+
+

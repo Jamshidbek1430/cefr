@@ -15,12 +15,14 @@ schema_view = get_schema_view(
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
-)  
+)
 
 urlpatterns = [
     path('superadmin-cyber-topdingku/', admin.site.urls),
+
     path('api/', include('apps.common.urls')),
     path('api/', include('apps.system.urls')),
+    path('api/videos/', include('apps.videos.urls')),
 
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
@@ -29,7 +31,6 @@ urlpatterns = [
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-# Serve frontend (SPA) for all non-backend routes
 urlpatterns += [
     re_path(
         r"^(?P<path>(?!(api/|swagger/|redoc/|superadmin-cyber-topdingku/|media/|static/)).*)$",

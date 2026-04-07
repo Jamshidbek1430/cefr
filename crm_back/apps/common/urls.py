@@ -1,10 +1,12 @@
 from django.urls import path, include
 
 from apps.attendance.views import (
+    ActiveLiveView,
     ChatImageUploadView,
     EndLiveLessonView,
     LiveLessonMessagesView,
     LiveStreamView,
+    StartLiveLessonView,
     StudentDashboardView,
     ChatRoomListView,
 )
@@ -13,7 +15,10 @@ urlpatterns = [
     path("auth/", include("apps.authentication.urls")),
     path("student/dashboard/", StudentDashboardView.as_view()),
     path("lessons/<int:lesson_id>/messages/", LiveLessonMessagesView.as_view()),
+    # Live lesson endpoints
+    path("live/", ActiveLiveView.as_view(), name="active-live"),
     path("live/stream/", LiveStreamView.as_view()),
+    path("live/start/", StartLiveLessonView.as_view(), name="start-live-global"),
     path("live/end/", EndLiveLessonView.as_view()),
     path("live/chat/upload/", ChatImageUploadView.as_view()),
     path("chat/rooms", ChatRoomListView.as_view()),

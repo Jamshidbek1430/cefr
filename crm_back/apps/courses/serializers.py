@@ -119,7 +119,17 @@ class LibraryItemSerializer(serializers.ModelSerializer):
         extra_kwargs = {"file": {"write_only": True, "required": False}}
 
     def get_file_url(self, obj):
-        request = self.context.get("request")
-        if obj.file and request:
-            return request.build_absolute_uri(obj.file.url)
+        if obj.file_url:
+            return obj.file_url
+        if obj.file and obj.file.name:
+            relative_url = obj.file.url
+            if relative_url.startswith("http"):
+                return relative_url
+            if self.context.get("request"):
+                try:
+                    return self.context["request"].build_absolute_uri(relative_url)
+                except Exception:
+                    pass
+            from django.conf import settings
+            return f"{getattr(settings, 'MEDIA_URL', '/media/')}{relative_url.lstrip('/')}"
         return None

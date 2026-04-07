@@ -73,16 +73,38 @@ export default function ChatPage() {
 
     const connectWebSocket = useCallback((lessonId: number) => {
         if (!accessToken) return;
-        socketRef.current?.close();
+
+        const cleanup = () => {
+            if (socketRef.current) {
+                socketRef.current.onopen = null;
+                socketRef.current.onmessage = null;
+                socketRef.current.onerror = null;
+                socketRef.current.onclose = null;
+                socketRef.current.close();
+                socketRef.current = null;
+            }
+        };
+
+        cleanup();
 
         const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         const configuredWsUrl = process.env.NEXT_PUBLIC_WS_URL?.replace(/\/$/, "");
-        const host = window.location.hostname === "localhost" ? "localhost:8000" : window.location.host;
-        const wsBaseUrl = configuredWsUrl || `${protocol}//${host}`;
+
+        // Use window.location.hostname for robustness
+        const backendHost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+            ? "127.0.0.1:8000"
+            : window.location.host;
+
+        const wsBaseUrl = configuredWsUrl || `${protocol}//${backendHost}`;
         const wsUrl = `${wsBaseUrl}/ws/live-chat/${lessonId}/?token=${encodeURIComponent(accessToken)}`;
 
+        console.log("Connecting to WebSocket:", wsUrl);
         const socket = new WebSocket(wsUrl);
         socketRef.current = socket;
+
+        socket.onopen = () => {
+            console.log("WebSocket Connected");
+        };
 
         socket.onmessage = (event) => {
             try {
@@ -97,10 +119,22 @@ export default function ChatPage() {
             }
         };
 
-        socket.onerror = () => {
-            socket.close();
+        socket.onerror = (error) => {
+            console.error("WebSocket Error:", error);
         };
-    }, [accessToken]);
+
+        socket.onclose = (event) => {
+            console.log("WebSocket Closed:", event.code, event.reason);
+            // Attempt to reconnect after 3 seconds if not closed intentionally
+            if (event.code !== 1000) {
+                setTimeout(() => {
+                    if (activeRoom?.id === lessonId) {
+                        connectWebSocket(lessonId);
+                    }
+                }, 3000);
+            }
+        };
+    }, [accessToken, activeRoom?.id]);
 
     useEffect(() => {
         if (status === "authenticated") {
@@ -150,6 +184,7 @@ export default function ChatPage() {
             const res = await fetch("/api/live/chat/upload", {
                 method: "POST",
                 body: formData,
+                credentials: "include",
             });
             const data = await res.json();
             if (data.image_url && socketRef.current?.readyState === WebSocket.OPEN) {
@@ -157,6 +192,8 @@ export default function ChatPage() {
                     type: "image",
                     message: data.image_url
                 }));
+            } else if (data.error) {
+                console.error("Upload error:", data.error);
             }
         } catch (err) {
             console.error("Upload failed", err);
