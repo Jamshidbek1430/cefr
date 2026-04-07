@@ -1,0 +1,260 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String?
+  name      String?
+  image     String?
+  specialty String?
+  experience Int?
+  role      Role     @relation(fields: [roleId], references: [id])
+  roleId    Int
+  branchId  Int?
+  branch    Branch?  @relation(fields: [branchId], references: [id])
+  teacherId    Int?
+  teacher      User?   @relation("TeacherStudents", fields: [teacherId], references: [id])
+  studentsList User[]  @relation("TeacherStudents")
+  groups       Group[]  @relation("UserGroups")
+  taughtGroups Group[]  @relation("TeacherGroups")
+  lessons   Lesson[] @relation("TeacherLessons")
+  homework  Homework[] @relation("StudentHomework")
+  sentMessages  ChatMessage[] @relation("SentMessages")
+  receivedMessages ChatMessage[] @relation("ReceivedMessages")
+  aiLogs    AIUsageLog[]
+  ratingsGiven Rating[] @relation("StudentRatings")
+  ratingsReceived Rating[] @relation("TeacherRatings")
+  attendance Attendance[]
+  markedAttendance Attendance[] @relation("AttendanceMarkedBy")
+  salaries  Salary[]
+  schedules Schedule[]
+  notesBy   StudentNote[] @relation("AuthorOfNote")
+  notesAbout StudentNote[] @relation("NoteAboutStudent")
+  activenessScore Float    @default(0)
+  monthlySalary   Float?
+  payments        Payment[] @relation("StudentPayments")
+  reports         Report[]  @relation("AuthorOfReport")
+  trainingSessions TrainingSession[] @relation("StudentTraining")
+  centerRatings    CenterRating[]    @relation("StudentCenterRatings")
+}
+
+enum RoleName {
+  SUPER_ADMIN
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+model Role {
+  id   Int      @id @default(autoincrement())
+  name RoleName @unique
+  users User[]
+}
+
+model Branch {
+  id        Int      @id @default(autoincrement())
+  name      String
+  location  String?
+  revenue   Float    @default(0)
+  users     User[]
+  groups    Group[]
+  createdAt DateTime @default(now())
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  groups      Group[]
+  createdAt   DateTime @default(now())
+}
+
+model Group {
+  id          Int      @id @default(autoincrement())
+  name        String
+  branchId    Int?
+  branch      Branch?  @relation(fields: [branchId], references: [id])
+  courseId    Int?
+  course      Course?  @relation(fields: [courseId], references: [id])
+  teachers    User[]   @relation("TeacherGroups")
+  students    User[]   @relation("UserGroups")
+  lessons     Lesson[]
+  homework    Homework[]
+  messages    ChatMessage[]
+  attendance  Attendance[]
+  schedules   Schedule[]
+}
+
+model Lesson {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String?
+  groupId     Int
+  group       Group    @relation(fields: [groupId], references: [id])
+  teacherId   Int
+  teacher     User     @relation("TeacherLessons", fields: [teacherId], references: [id])
+  homework    Homework[]
+}
+
+model Homework {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  dueDate     DateTime?
+  lessonId    Int?
+  lesson      Lesson?  @relation(fields: [lessonId], references: [id])
+  groupId     Int?
+  group       Group?   @relation(fields: [groupId], references: [id])
+  studentId   Int?
+  student     User?    @relation("StudentHomework", fields: [studentId], references: [id])
+  submitted   Boolean  @default(false)
+  submission  String?
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  senderId  Int
+  sender    User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId Int?
+  receiver   User?    @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  groupId   Int?
+  group     Group?   @relation(fields: [groupId], references: [id])
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  stars     Int      // 1-5
+  comment   String?
+  studentId Int
+  student   User     @relation("StudentRatings", fields: [studentId], references: [id])
+  teacherId Int
+  teacher   User     @relation("TeacherRatings", fields: [teacherId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@index([teacherId])
+}
+
+model Attendance {
+  id        Int              @id @default(autoincrement())
+  date      DateTime         @default(now())
+  status    AttendanceStatus @default(PRESENT)
+  note      String?
+  studentId Int
+  student   User             @relation(fields: [studentId], references: [id])
+  groupId   Int
+  group     Group            @relation(fields: [groupId], references: [id])
+  teacherId Int
+  teacher   User             @relation("AttendanceMarkedBy", fields: [teacherId], references: [id])
+
+  @@index([studentId])
+  @@index([groupId])
+  @@index([date])
+}
+
+model Salary {
+  id           Int      @id @default(autoincrement())
+  amount       Float    // Base amount
+  bonus        Float    @default(0)
+  deductions   Float    @default(0)
+  payoutDate   DateTime
+  status       String   @default("PENDING") // PENDING, PAID
+  teacherId    Int
+  teacher      User     @relation(fields: [teacherId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([teacherId])
+}
+
+model Schedule {
+  id        Int      @id @default(autoincrement())
+  startTime DateTime
+  endTime   DateTime
+  dayOfWeek Int      // 0-6 (Sunday-Saturday)
+  teacherId Int
+  teacher   User     @relation(fields: [teacherId], references: [id])
+  groupId   Int?
+  group     Group?   @relation(fields: [groupId], references: [id])
+
+  @@index([teacherId])
+}
+
+model StudentNote {
+  id        Int      @id @default(autoincrement())
+  content   String
+  teacherId Int
+  teacher   User     @relation("AuthorOfNote", fields: [teacherId], references: [id])
+  studentId Int
+  student   User     @relation("NoteAboutStudent", fields: [studentId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@index([studentId])
+}
+
+model AIUsageLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  type      String   // e.g., "speaking", "writing", "helper"
+  prompt    String?
+  response  String?
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  status      String   // PAID, UNPAID, PARTIAL
+  date        DateTime @default(now())
+  studentId   Int
+  student     User     @relation("StudentPayments", fields: [studentId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Report {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String   // JSON or HTML string from Tiptap
+  authorId  Int
+  author    User     @relation("AuthorOfReport", fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model TrainingSession {
+  id             Int      @id @default(autoincrement())
+  topic          String
+  score          Int
+  totalQuestions Int
+  studentId      Int
+  student        User     @relation("StudentTraining", fields: [studentId], references: [id])
+  createdAt      DateTime @default(now())
+
+  @@index([studentId])
+}
+
+model CenterRating {
+  id        Int      @id @default(autoincrement())
+  stars     Int      // 1-5
+  comment   String?
+  period    String   // e.g., "2026-03"
+  studentId Int
+  student   User     @relation("StudentCenterRatings", fields: [studentId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@index([studentId])
+}
