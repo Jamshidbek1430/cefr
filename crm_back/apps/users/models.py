@@ -61,6 +61,7 @@ class UserManager(DjangoUserManager):
 
         return self._create_user(telegram_username, password, **extra_fields)
 
+
 class User(AbstractUser):
     ROLES = (
         ('admin', 'Admin'),
@@ -72,11 +73,23 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=20, verbose_name="Phone number", unique=True, blank=True, null=True)
     full_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Full Name")
     telegram_username = models.CharField(max_length=150, blank=True, null=True, unique=True, verbose_name="Telegram username")
-    
+
     role = models.CharField(choices=ROLES, max_length=50, default='student', verbose_name="Foydalanuvchi roli")
     is_active = models.BooleanField(default=True, verbose_name="Faol foydalanuvchi")
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True) 
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # Fix for clashing reverse accessors
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='custom_user_set',
+        blank=True
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='custom_user_set',
+        blank=True
+    )
 
     objects = UserManager()
 
@@ -85,7 +98,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.full_name or self.telegram_username or self.username
-    
+
     def save(self, *args, **kwargs):
         if self.is_superuser and self.role != 'admin':
             self.role = 'admin'
@@ -103,4 +116,6 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "Foydalanuvchi"
         verbose_name_plural = "Foydalanuvchilar"
+
+
 auditlog.register(User)

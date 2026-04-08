@@ -86,7 +86,7 @@ export default function LibraryDetailPage() {
                 className="min-h-[600px] h-[calc(100vh-200px)] w-full rounded-3xl border border-gray-800 bg-gray-900 p-1 overflow-hidden select-none"
                 onContextMenu={(e) => e.preventDefault()}
                 onCopy={(e) => e.preventDefault()}
-                onSelectStart={(e) => e.preventDefault()}
+                
             >
                 {item.file_type === "pdf" ? (
                     item.file_url ? (

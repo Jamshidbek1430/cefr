@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -47,22 +46,23 @@ export default function LoginPage() {
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     setIsLoading(true);
+
     try {
       const res = await signIn("credentials", {
         redirect: false,
-        telegram_username: values.telegramUsername.replace(/^@+/, ""),
+        username: values.telegramUsername.replace(/^@+/, ""),   // ← Fixed: changed to "username"
         password: values.password,
       });
 
       if (res?.error) {
-        toast.error("Invalid Telegram username or password.");
+        toast.error(res.error || "Invalid Telegram username or password.");
       } else {
         toast.success("Successfully logged in.");
         router.push("/dashboard");
         router.refresh();
       }
-    } catch {
-      toast.error("Something went wrong. Please try again.");
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -93,6 +93,7 @@ export default function LoginPage() {
               Only Telegram username and password login is enabled for this workspace.
             </CardDescription>
           </CardHeader>
+
           <CardContent className="space-y-6">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
