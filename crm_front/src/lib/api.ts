@@ -1,7 +1,5 @@
 import { getBackendUrl } from "@/lib/backend-url";
 
-const API_URL = getBackendUrl();
-
 export async function apiFetch(endpoint: string, options: RequestInit & { accessToken?: string } = {}) {
     let accessToken = options.accessToken;
 
@@ -20,7 +18,25 @@ export async function apiFetch(endpoint: string, options: RequestInit & { access
         headers.set("Authorization", `Bearer ${accessToken}`);
     }
 
-    const url = endpoint.startsWith("http") ? endpoint : `${API_URL}${endpoint}`;
+    // CRITICAL FIX: In browser, ALWAYS use relative URLs to go through Next.js API routes
+    // On server, use full backend URL
+    let url: string;
+    if (typeof window !== "undefined") {
+        // BROWSER: use relative URL - all /api/* requests go through Next.js
+        if (endpoint.startsWith("http")) {
+            // Extract path from full URL
+            const urlObj = new URL(endpoint);
+            url = urlObj.pathname + urlObj.search;
+        } else {
+            url = endpoint;
+        }
+        // Clean up trailing slashes
+        url = url.replace(/\/\/$/, "");
+    } else {
+        // SERVER: use full backend URL
+        const API_URL = getBackendUrl();
+        url = endpoint.startsWith("http") ? endpoint : `${API_URL}${endpoint}`;
+    }
 
     const res = await fetch(url, {
         ...options,

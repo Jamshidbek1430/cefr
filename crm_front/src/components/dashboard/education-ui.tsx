@@ -43,7 +43,7 @@ export function LoadingState({ label = "Loading..." }: { label?: string }) {
   return (
     <div className="flex min-h-[320px] items-center justify-center rounded-3xl border border-gray-800 bg-gray-900">
       <div className="flex items-center gap-3 text-sm text-gray-400">
-        <Loader2 className="h-5 w-5 animate-spin text-teal-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-[#8B1E2D]" />
         <span>{label}</span>
       </div>
     </div>
@@ -116,7 +116,7 @@ export function WeeklyPerformanceChart({
               color: "#ffffff",
             }}
           />
-          <Line type="monotone" dataKey="attendance" stroke="#14b8a6" strokeWidth={3} dot={false} />
+          <Line type="monotone" dataKey="attendance" stroke="#8B1E2D" strokeWidth={3} dot={false} />
           <Line type="monotone" dataKey="homework" stroke="#a855f7" strokeWidth={3} dot={false} />
         </LineChart>
       </ResponsiveContainer>
@@ -221,7 +221,7 @@ export function StudentsDirectory({
                   className="flex w-full flex-col gap-4 px-5 py-5 text-left transition-all duration-200 hover:bg-gray-900/80 md:flex-row md:items-center md:justify-between group"
                 >
                   <div>
-                    <p className="text-lg font-bold tracking-tight text-white group-hover:text-teal-400 transition-colors">{student.full_name}</p>
+                    <p className="text-lg font-bold tracking-tight text-white group-hover:text-[#8B1E2D] transition-colors">{student.full_name}</p>
                     <p className="mt-1 text-sm text-gray-500 font-medium tracking-tight">@{student.telegram_username}</p>
                   </div>
                   <div className="flex gap-4">

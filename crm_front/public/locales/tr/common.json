@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "dashboard": "Ana Sayfa",
+    "live": "Canlı Ders",
+    "videos": "Videolar",
+    "library": "Kütüphane",
+    "homework": "Ödevler",
+    "chat": "Sohbet",
+    "settings": "Ayarlar",
+    "students": "Öğrenciler",
+    "teachers": "Öğretmenler",
+    "users": "Kullanıcılar",
+    "schedule": "Program"
+  },
+  "dashboard": {
+    "title": "Ana Sayfa",
+    "admin_title": "Yönetici Paneli",
+    "student_performance": "Öğrenci Performansı",
+    "student_performance_desc": "Öğrencileri arayın, devam ve ödevleri karşılaştırın",
+    "search_student": "Öğrenci adı veya kullanıcı adına göre arayın",
+    "add_teacher": "Öğretmen Ekle",
+    "add_student": "Öğrenci Ekle",
+    "attendance": "Devam",
+    "homework": "Ödev",
+    "week": "Hafta",
+    "learning_workspace": "Öğrenme Alanı",
+    "platform": "Platform"
+  },
+  "buttons": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "upload": "Yükle",
+    "submit": "Gönder",
+    "back": "Geri",
+    "logout": "Çıkış",
+    "login": "Giriş",
+    "register": "Kayıt Ol",
+    "add": "Ekle",
+    "search": "Ara",
+    "close": "Kapat",
+    "confirm": "Onayla"
+  },
+  "library": {
+    "title": "Kütüphane",
+    "pdfs": "PDF Dosyaları",
+    "audio": "Ses",
+    "images": "Görseller",
+    "upload": "Dosya Yükle",
+    "no_files": "Dosya bulunamadı",
+    "read": "Oku",
+    "search": "Başlığa göre ara...",
+    "type": "Tür",
+    "uploaded": "Yüklendi"
+  },
+  "videos": {
+    "title": "Videolar",
+    "upload": "Video Yükle",
+    "no_videos": "Video bulunamadı",
+    "back": "Videolara Dön",
+    "no_date": "Tarih yok",
+    "add_recorded": "Kayıtlı ders ekle"
+  },
+  "auth": {
+    "username": "Kullanıcı Adı",
+    "password": "Şifre",
+    "full_name": "Ad Soyad",
+    "verification_code": "Doğrulama Kodu",
+    "login_title": "Giriş Yap",
+    "register_title": "Kayıt Ol",
+    "welcome": "Hoş Geldiniz"
+  },
+  "live": {
+    "title": "Canlı Ders",
+    "chat": "Canlı Sohbet",
+    "start": "Dersi Başlat",
+    "end": "Dersi Bitir",
+    "no_messages": "Henüz mesaj yok"
+  },
+  "homework": {
+    "title": "Ödevler",
+    "no_homework": "Ödev bulunamadı",
+    "due_date": "Son Tarih",
+    "submit": "Teslim Et"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "language": "Dil",
+    "profile": "Profil"
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "confirm_delete": "Silmek istediğinizden emin misiniz?",
+    "no_data": "Veri bulunamadı",
+    "back_to": "Geri Dön"
+  }
+}

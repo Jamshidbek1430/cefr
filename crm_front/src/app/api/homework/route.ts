@@ -19,3 +19,30 @@ export async function GET() {
         return new NextResponse(error.message || "Internal Error", { status: 500 });
     }
 }
+
+export async function POST(req: Request) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        if (session.user.role !== "TEACHER" && session.user.role !== "ADMIN") {
+            return new NextResponse("Only teachers can create homework", { status: 403 });
+        }
+
+        const accessToken = (session as any).accessToken;
+        const body = await req.json();
+        
+        const homework = await apiFetch("/api/homework/", {
+            method: "POST",
+            accessToken,
+            body: JSON.stringify(body),
+        });
+        
+        return NextResponse.json(homework, { status: 201 });
+    } catch (error: any) {
+        console.error("Error creating homework:", error);
+        return new NextResponse(error.message || "Internal Error", { status: 500 });
+    }
+}

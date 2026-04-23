@@ -117,6 +117,38 @@ class AdminUserUpdateView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = "pk"
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
+    def destroy(self, request, *args, **kwargs):
+        """
+        Override destroy to add safety checks:
+        - Prevent deleting yourself
+        - Prevent deleting the last superuser/admin
+        """
+        from django.db import models
+        user_to_delete = self.get_object()
+        current_user = request.user
+        
+        # Prevent self-deletion
+        if user_to_delete.id == current_user.id:
+            return Response(
+                {"detail": "You cannot delete your own account."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Prevent deleting the last admin/superuser
+        if user_to_delete.role == "admin" or user_to_delete.is_superuser:
+            admin_count = User.objects.filter(
+                models.Q(role="admin") | models.Q(is_superuser=True)
+            ).count()
+            
+            if admin_count <= 1:
+                return Response(
+                    {"detail": "Cannot delete the last administrator. At least one admin must remain."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        # Proceed with deletion
+        return super().destroy(request, *args, **kwargs)
+
 
 class AdminChangeUserPasswordAPIView(APIView):
 	"""

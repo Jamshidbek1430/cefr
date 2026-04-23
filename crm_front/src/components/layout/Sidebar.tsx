@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import { useTranslation } from 'react-i18next';
+import '@/i18n';
 import {
   CalendarDays,
   ClipboardList,
@@ -11,8 +13,6 @@ import {
   Library,
   LogOut,
   PlaySquare,
-  Radio,
-  MessageCircle,
   Settings,
   Shield,
   UserCheck,
@@ -23,34 +23,8 @@ import {
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/lib/store";
 
-const learnerLinks = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Live Lesson", href: "/live", icon: Radio },
-  { name: "Videos", href: "/videos", icon: PlaySquare },
-  { name: "Library", href: "/library", icon: Library },
-  { name: "Homework", href: "/homework", icon: ClipboardList },
-  { name: "Chat", href: "/chat", icon: MessageCircle },
-  { name: "Settings", href: "/settings", icon: Settings },
-];
-
-const roleBasedLinks: Record<string, any[]> = {
-  STUDENT: learnerLinks,
-  TEACHER: learnerLinks,
-  ADMIN: [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Schedule", href: "/schedule", icon: CalendarDays },
-    { name: "Users", href: "/users", icon: Shield },
-    { name: "Students", href: "/students", icon: Users },
-    { name: "Teachers", href: "/teachers", icon: UserCheck },
-    { name: "Homework", href: "/homework", icon: ClipboardList },
-    { name: "Videos", href: "/videos", icon: PlaySquare },
-    { name: "Library", href: "/library", icon: Library },
-    { name: "Chat", href: "/chat", icon: MessageCircle },
-    { name: "Settings", href: "/settings", icon: Settings },
-  ],
-};
-
 export function Sidebar() {
+  const { t } = useTranslation('common');
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const { sidebarOpen, setSidebarOpen } = useUIStore();
@@ -60,6 +34,31 @@ export function Sidebar() {
   }
 
   const role = session.user.role as string;
+
+  const learnerLinks = [
+    { name: t('nav.dashboard'), href: "/dashboard", icon: LayoutDashboard },
+    { name: t('nav.videos'), href: "/videos", icon: PlaySquare },
+    { name: t('nav.library'), href: "/library", icon: Library },
+    { name: t('nav.homework'), href: "/homework", icon: ClipboardList },
+    { name: t('nav.settings'), href: "/settings", icon: Settings },
+  ];
+
+  const roleBasedLinks: Record<string, any[]> = {
+    STUDENT: learnerLinks,
+    TEACHER: learnerLinks,
+    ADMIN: [
+      { name: t('nav.dashboard'), href: "/dashboard", icon: LayoutDashboard },
+      { name: t('nav.schedule'), href: "/schedule", icon: CalendarDays },
+      { name: t('nav.users'), href: "/users", icon: Shield },
+      { name: t('nav.students'), href: "/students", icon: Users },
+      { name: t('nav.teachers'), href: "/teachers", icon: UserCheck },
+      { name: t('nav.homework'), href: "/homework", icon: ClipboardList },
+      { name: t('nav.videos'), href: "/videos", icon: PlaySquare },
+      { name: t('nav.library'), href: "/library", icon: Library },
+      { name: t('nav.settings'), href: "/settings", icon: Settings },
+    ],
+  };
+
   const links = roleBasedLinks[role] || [];
 
   return (
@@ -78,69 +77,57 @@ export function Sidebar() {
         )}
       >
         <div className="flex h-16 items-center justify-between border-b border-gray-800 px-5">
-          <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="rounded-2xl bg-teal-500/15 p-2 text-teal-400">
-              <GraduationCap className="h-6 w-6" />
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#8B1E2D]">
+              <GraduationCap className="h-6 w-6 text-white" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500/80">Platform</p>
-              <p className="text-xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-blue-500">
-                KOMIL_CEFR
+              <p className="text-sm font-black uppercase tracking-[0.2em] text-white">
+                ARTUR
+              </p>
+              <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-gray-500">
+                TURKCE
               </p>
             </div>
-          </Link>
+          </div>
           <button
-            type="button"
-            className="rounded-full border border-gray-800 p-2 text-gray-400 md:hidden"
             onClick={() => setSidebarOpen(false)}
+            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-900 hover:text-white md:hidden"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-5">
-          <nav className="space-y-2">
-            {links.map((link) => {
-              const isActive =
-                link.href === "/dashboard"
-                  ? pathname === link.href
-                  : pathname === link.href || pathname?.startsWith(`${link.href}/`);
-              const Icon = link.icon;
-
-              return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={cn(
-                    "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition-all duration-200 hover:scale-[1.02]",
-                    isActive
-                      ? "bg-teal-500/15 text-teal-300 shadow-lg shadow-teal-500/10"
-                      : "text-gray-400 hover:bg-gray-900 hover:text-white hover:shadow-xl",
-                  )}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span>{link.name}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
+        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+          {links.map((link) => {
+            const isActive = pathname === link.href;
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setSidebarOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all",
+                  isActive
+                    ? "bg-[#8B1E2D] text-white shadow-lg shadow-[#8B1E2D]/20"
+                    : "text-gray-400 hover:bg-gray-900 hover:text-white",
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                <span>{link.name}</span>
+              </Link>
+            );
+          })}
+        </nav>
 
         <div className="border-t border-gray-800 p-4">
-          <div className="mb-4 rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3">
-            <p className="truncate text-sm font-medium text-white">{session?.user?.name}</p>
-            <p className="mt-1 truncate text-xs text-gray-400">{session?.user?.email}</p>
-            <p className="mt-2 text-xs uppercase tracking-[0.2em] text-teal-400">{role}</p>
-          </div>
           <button
-            type="button"
-            onClick={async () => {
-              await signOut({ callbackUrl: "/login" });
-            }}
-            className="flex w-full items-center gap-3 rounded-2xl border border-red-500/20 px-4 py-3 text-sm font-medium text-red-400 transition hover:bg-red-500/10"
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 transition-all hover:bg-gray-900 hover:text-white"
           >
             <LogOut className="h-5 w-5" />
-            <span>Log out</span>
+            <span>{t('buttons.logout')}</span>
           </button>
         </div>
       </aside>

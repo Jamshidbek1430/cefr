@@ -22,7 +22,9 @@ urlpatterns = [
 
     path('api/', include('apps.common.urls')),
     path('api/', include('apps.system.urls')),
-    path('api/videos/', include('apps.videos.urls')),
+    path('api/videos/', include('apps.courses.urls_videos')),
+    path('api/library/', include('apps.courses.urls_library')),
+    path('api/homework/', include('apps.courses.urls')),
 
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
@@ -37,3 +39,4 @@ urlpatterns += [
         serve_frontend,
     ),
 ]
+

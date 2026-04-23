@@ -13,8 +13,8 @@ from rest_framework.views import APIView
 from apps.courses.models import Homework, HomeworkSubmission
 from apps.groups.models import Lesson
 
-from .models import Attendance, LiveMessage
-from .serializers import AttendanceSerializer, LiveMessageSerializer
+from .models import Attendance
+from .serializers import AttendanceSerializer
 
 
 def _lesson_datetime(lesson):

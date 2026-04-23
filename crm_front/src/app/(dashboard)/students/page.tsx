@@ -45,7 +45,7 @@ export default function StudentsPage() {
   return (
     <main className="min-h-screen bg-gray-950 text-white">
       <h1 className="text-3xl font-black">Students</h1>
-      <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by name or username..." className="mt-5 w-full max-w-xl rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3 outline-none focus:border-[#14b8a6]" />
+      <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by name or username..." className="mt-5 w-full max-w-xl rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3 outline-none focus:border-[#8B1E2D]" />
 
       <div className="mt-6 space-y-4">
         {students.map((student) => {
@@ -83,7 +83,7 @@ export default function StudentsPage() {
                         <XAxis dataKey="week" tick={{ fill: "#9ca3af", fontSize: 12 }} />
                         <YAxis domain={[0, 100]} tick={{ fill: "#9ca3af", fontSize: 12 }} />
                         <Tooltip contentStyle={{ background: "#111827", border: "1px solid #1f2937", borderRadius: 12 }} />
-                        <Line type="monotone" dataKey="attendance" stroke="#14b8a6" strokeWidth={3} dot={false} />
+                        <Line type="monotone" dataKey="attendance" stroke="#8B1E2D" strokeWidth={3} dot={false} />
                         <Line type="monotone" dataKey="homework" stroke="#a855f7" strokeWidth={3} dot={false} />
                       </LineChart>
                     </ResponsiveContainer>

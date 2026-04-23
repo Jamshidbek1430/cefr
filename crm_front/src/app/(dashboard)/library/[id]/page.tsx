@@ -67,14 +67,21 @@ export default function LibraryDetailPage() {
     if (loading) return <p className="p-10 text-gray-400">Loading document...</p>;
     if (!item) return <p className="p-10 text-gray-400">Document not found.</p>;
 
-    console.log("Rendering item:", item);
-    console.log("file_url:", item.file_url);
+    const isTeacherOrAdmin = session?.user?.role === 'TEACHER' || session?.user?.role === 'ADMIN';
+
+    // For students: use Google Docs viewer (no download button)
+    // For teachers/admins: use direct iframe (with download)
+    const pdfViewerUrl = item.file_type === "pdf" && item.file_url
+        ? (isTeacherOrAdmin 
+            ? item.file_url 
+            : `https://docs.google.com/viewer?url=${encodeURIComponent(item.file_url)}&embedded=true`)
+        : item.file_url;
 
     return (
         <main className="min-h-screen bg-gray-950 text-white flex flex-col p-6">
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <Link href="/library" className="inline-flex rounded-2xl border border-gray-800 px-4 py-2 text-sm font-semibold text-gray-300 hover:border-[#14b8a6] hover:text-white mb-4">
+                    <Link href="/library" className="inline-flex rounded-2xl border border-gray-800 px-4 py-2 text-sm font-semibold text-gray-300 hover:border-[#8B1E2D] hover:text-white mb-4">
                         ← Back to Library
                     </Link>
                     <h1 className="text-3xl font-black">{item.title}</h1>
@@ -86,16 +93,31 @@ export default function LibraryDetailPage() {
                 className="min-h-[600px] h-[calc(100vh-200px)] w-full rounded-3xl border border-gray-800 bg-gray-900 p-1 overflow-hidden select-none"
                 onContextMenu={(e) => e.preventDefault()}
                 onCopy={(e) => e.preventDefault()}
-                
             >
                 {item.file_type === "pdf" ? (
                     item.file_url ? (
-                        <iframe
-                            src={item.file_url + "?download=0"}
-                            className="w-full h-full rounded-xl bg-white border-0"
-                            title="PDF Viewer"
-                            onContextMenu={(e) => e.preventDefault()}
-                        />
+                        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                            <iframe
+                                src={pdfViewerUrl}
+                                className="w-full h-full rounded-xl bg-white border-0"
+                                title="PDF Viewer"
+                            />
+                            {/* Block right-click overlay for students */}
+                            {!isTeacherOrAdmin && (
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        width: '100%',
+                                        height: '100%',
+                                        zIndex: 1,
+                                        pointerEvents: 'none'
+                                    }}
+                                    onContextMenu={(e) => e.preventDefault()}
+                                />
+                            )}
+                        </div>
                     ) : (
                         <p className="text-red-400 p-4">PDF file URL not available</p>
                     )

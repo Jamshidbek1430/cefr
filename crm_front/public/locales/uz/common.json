@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "dashboard": "Bosh sahifa",
+    "live": "Jonli dars",
+    "videos": "Videolar",
+    "library": "Kutubxona",
+    "homework": "Vazifalar",
+    "chat": "Chat",
+    "settings": "Sozlamalar",
+    "students": "Talabalar",
+    "teachers": "O'qituvchilar",
+    "users": "Foydalanuvchilar",
+    "schedule": "Jadval"
+  },
+  "dashboard": {
+    "title": "Bosh sahifa",
+    "admin_title": "Admin paneli",
+    "student_performance": "Talabalar natijalari",
+    "student_performance_desc": "Talabalarni qidiring, davomat va vazifalarni solishtiring",
+    "search_student": "Talaba ismi yoki username bo'yicha qidiring",
+    "add_teacher": "O'qituvchi qo'shish",
+    "add_student": "Talaba qo'shish",
+    "attendance": "Davomat",
+    "homework": "Vazifalar",
+    "week": "Hafta",
+    "learning_workspace": "O'quv maydoni",
+    "platform": "Platforma"
+  },
+  "buttons": {
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "delete": "O'chirish",
+    "edit": "Tahrirlash",
+    "upload": "Yuklash",
+    "submit": "Yuborish",
+    "back": "Orqaga",
+    "logout": "Chiqish",
+    "login": "Kirish",
+    "register": "Ro'yxatdan o'tish",
+    "add": "Qo'shish",
+    "search": "Qidirish",
+    "close": "Yopish",
+    "confirm": "Tasdiqlash"
+  },
+  "library": {
+    "title": "Kutubxona",
+    "pdfs": "PDF fayllar",
+    "audio": "Audio",
+    "images": "Rasmlar",
+    "upload": "Fayl yuklash",
+    "no_files": "Fayllar topilmadi",
+    "read": "O'qish",
+    "search": "Sarlavha bo'yicha qidirish...",
+    "type": "Tur",
+    "uploaded": "Yuklangan"
+  },
+  "videos": {
+    "title": "Videolar",
+    "upload": "Video yuklash",
+    "no_videos": "Videolar topilmadi",
+    "back": "Videolarga qaytish",
+    "no_date": "Sana yo'q",
+    "add_recorded": "Yozilgan dars qo'shish"
+  },
+  "auth": {
+    "username": "Foydalanuvchi nomi",
+    "password": "Parol",
+    "full_name": "To'liq ism",
+    "verification_code": "Tasdiqlash kodi",
+    "login_title": "Kirish",
+    "register_title": "Ro'yxatdan o'tish",
+    "welcome": "Xush kelibsiz"
+  },
+  "live": {
+    "title": "Jonli dars",
+    "chat": "Jonli chat",
+    "start": "Darsni boshlash",
+    "end": "Darsni tugatish",
+    "no_messages": "Xabarlar yo'q"
+  },
+  "homework": {
+    "title": "Vazifalar",
+    "no_homework": "Vazifalar topilmadi",
+    "due_date": "Topshirish sanasi",
+    "submit": "Topshirish"
+  },
+  "settings": {
+    "title": "Sozlamalar",
+    "language": "Til",
+    "profile": "Profil"
+  },
+  "common": {
+    "loading": "Yuklanmoqda...",
+    "error": "Xatolik",
+    "success": "Muvaffaqiyatli",
+    "confirm_delete": "O'chirmoqchimisiz?",
+    "no_data": "Ma'lumot topilmadi",
+    "back_to": "Orqaga"
+  }
+}

@@ -194,7 +194,7 @@ export const mockMessages: ChatMessage[] = [
     id: 1,
     type: "text",
     content: "Welcome everyone to today's lesson!",
-    sender_name: "Komil Teacher",
+    sender_name: "Artur Teacher",
     sender_username: "komilteacher",
     is_teacher: true,
     is_pinned: true,
@@ -204,7 +204,7 @@ export const mockMessages: ChatMessage[] = [
     id: 2,
     type: "text",
     content: "Today we cover conditionals",
-    sender_name: "Komil Teacher",
+    sender_name: "Artur Teacher",
     sender_username: "komilteacher",
     is_teacher: true,
     is_pinned: true,
@@ -224,7 +224,7 @@ export const mockMessages: ChatMessage[] = [
     id: 4,
     type: "text",
     content: "Check this video: https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    sender_name: "Komil Teacher",
+    sender_name: "Artur Teacher",
     sender_username: "komilteacher",
     is_teacher: true,
     is_pinned: true,
@@ -233,12 +233,12 @@ export const mockMessages: ChatMessage[] = [
 ];
 
 export const mockVideos: VideoRecord[] = [
-  { id: 1, title: "Lesson 10 Recording", uploaded_at: "2026-04-01", teacher: "Komil Teacher", video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", attached_homework_title: "Unit 3 Grammar Exercise" },
-  { id: 2, title: "Grammar: Past Perfect", uploaded_at: "2026-03-28", teacher: "Komil Teacher", video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", attached_homework_title: "Past Perfect Worksheet" },
-  { id: 3, title: "Vocabulary Unit 4", uploaded_at: "2026-03-25", teacher: "Komil Teacher", video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", attached_homework_title: null },
-  { id: 4, title: "Lesson 9 Recording", uploaded_at: "2026-03-22", teacher: "Komil Teacher", video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", attached_homework_title: "Listening Reflection" },
-  { id: 5, title: "Speaking Practice", uploaded_at: "2026-03-19", teacher: "Komil Teacher", video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", attached_homework_title: null },
-  { id: 6, title: "Writing Workshop", uploaded_at: "2026-03-16", teacher: "Komil Teacher", video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", attached_homework_title: "Essay Draft" },
+  { id: 1, title: "Lesson 10 Recording", uploaded_at: "2026-04-01", teacher: "Artur Teacher", video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", attached_homework_title: "Unit 3 Grammar Exercise" },
+  { id: 2, title: "Grammar: Past Perfect", uploaded_at: "2026-03-28", teacher: "Artur Teacher", video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", attached_homework_title: "Past Perfect Worksheet" },
+  { id: 3, title: "Vocabulary Unit 4", uploaded_at: "2026-03-25", teacher: "Artur Teacher", video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", attached_homework_title: null },
+  { id: 4, title: "Lesson 9 Recording", uploaded_at: "2026-03-22", teacher: "Artur Teacher", video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", attached_homework_title: "Listening Reflection" },
+  { id: 5, title: "Speaking Practice", uploaded_at: "2026-03-19", teacher: "Artur Teacher", video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", attached_homework_title: null },
+  { id: 6, title: "Writing Workshop", uploaded_at: "2026-03-16", teacher: "Artur Teacher", video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", attached_homework_title: "Essay Draft" },
 ];
 
 export const mockLibrary: LibraryItem[] = [
@@ -272,7 +272,7 @@ export const mockLessons: LessonRecord[] = [
 ];
 
 export const mockTeachers: TeacherRecord[] = [
-  { id: 1, full_name: "Komil Teacher", telegram_username: "komilteacher" },
+  { id: 1, full_name: "Artur Teacher", telegram_username: "komilteacher" },
   { id: 2, full_name: "Nodira Abdullaeva", telegram_username: "nodiraenglish" },
   { id: 3, full_name: "Sherzod Mamatkulov", telegram_username: "sherzod_cefr" },
 ];

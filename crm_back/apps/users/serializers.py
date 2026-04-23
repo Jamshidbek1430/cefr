@@ -30,6 +30,20 @@ class UserSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+    def update(self, instance, validated_data):
+        # Allow role updates
+        if 'role' in validated_data:
+            instance.role = validated_data['role']
+        
+        # Update other fields
+        for attr, value in validated_data.items():
+            if attr != 'role':
+                setattr(instance, attr, value)
+        
+        instance.save()
+        return instance
 
 class AdminListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -99,3 +113,4 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data.get("password"),
         )
         return user
+

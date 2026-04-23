@@ -50,7 +50,7 @@ export default function LoginPage() {
     try {
       const res = await signIn("credentials", {
         redirect: false,
-        username: values.telegramUsername.replace(/^@+/, ""),   // ← Fixed: changed to "username"
+        telegram_username: values.telegramUsername.replace(/^@+/, ""),
         password: values.password,
       });
 
@@ -70,23 +70,24 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gray-950 px-4 py-12 text-white">
-      <div className="absolute left-0 top-0 h-96 w-96 rounded-full bg-teal-500/10 blur-3xl" />
-      <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
+      {/* Background decorations - MUST have pointer-events-none */}
+      <div style={{ pointerEvents: 'none' }} className="absolute left-0 top-0 h-96 w-96 rounded-full bg-[#8B1E2D]/10 blur-3xl" />
+      <div style={{ pointerEvents: 'none' }} className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
 
-      <div className="w-full max-w-lg space-y-8">
-        <div className="text-center">
-          <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-3xl border border-teal-500/20 bg-teal-500/10">
-            <GraduationCap className="h-10 w-10 text-teal-400" />
+      <div className="relative z-10 w-full max-w-lg space-y-8">
+        <div className="text-center pointer-events-none">
+          <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-3xl border border-[#8B1E2D]/20 bg-[#8B1E2D]/10">
+            <GraduationCap className="h-10 w-10 text-[#8B1E2D]" />
           </div>
           <h1 className="text-4xl font-black tracking-tight uppercase">
-            <span className="text-teal-400">KOMIL</span>_CEFR
+            <span className="text-[#8B1E2D]">ARTUR</span>_CEFR
           </h1>
           <p className="mt-3 text-[10px] font-black uppercase tracking-[0.4em] text-gray-500/80">
             Secure Learning Gateway
           </p>
         </div>
 
-        <Card className="border-gray-800 bg-gray-900/90 text-white shadow-2xl">
+        <Card className="relative z-20 border-gray-800 bg-gray-900/90 text-white shadow-2xl">
           <CardHeader className="space-y-2">
             <CardTitle className="text-2xl font-semibold text-white">Welcome back</CardTitle>
             <CardDescription className="text-gray-400">
@@ -107,11 +108,20 @@ export default function LoginPage() {
                       </FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <AtSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                          <AtSign style={{ pointerEvents: 'none' }} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500 z-10" />
                           <Input
                             placeholder="komilstudent"
                             {...field}
                             disabled={isLoading}
+                            autoComplete="username"
+                            inputMode="text"
+                            style={{ 
+                              touchAction: 'manipulation',
+                              fontSize: '16px',
+                              minHeight: '48px',
+                              position: 'relative',
+                              zIndex: 30
+                            }}
                             className="h-12 rounded-2xl border-gray-800 bg-gray-950 pl-10 text-white placeholder:text-gray-500"
                           />
                         </div>
@@ -133,6 +143,14 @@ export default function LoginPage() {
                           placeholder="password"
                           {...field}
                           disabled={isLoading}
+                          autoComplete="current-password"
+                          style={{ 
+                            touchAction: 'manipulation',
+                            fontSize: '16px',
+                            minHeight: '48px',
+                            position: 'relative',
+                            zIndex: 30
+                          }}
                           className="h-12 rounded-2xl border-gray-800 bg-gray-950 text-white placeholder:text-gray-500"
                         />
                       </FormControl>
@@ -144,7 +162,13 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="h-12 w-full rounded-2xl bg-teal-500 text-white hover:bg-teal-400"
+                  style={{ 
+                    touchAction: 'manipulation',
+                    minHeight: '48px',
+                    position: 'relative',
+                    zIndex: 30
+                  }}
+                  className="h-12 w-full rounded-2xl bg-[#8B1E2D] text-white hover:bg-[#8B1E2D]"
                 >
                   {isLoading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -164,7 +188,7 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-gray-400">
               Don&apos;t have an account?{" "}
-              <Link href="/register" className="font-semibold text-teal-400 hover:text-teal-300">
+              <Link href="/register" className="font-semibold text-[#8B1E2D] hover:text-[#A52335]">
                 Register here
               </Link>
             </p>
@@ -174,3 +198,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

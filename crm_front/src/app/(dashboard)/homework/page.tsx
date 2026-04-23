@@ -2,7 +2,9 @@
 
 import { type FormEvent, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
+import { Plus } from "lucide-react";
 
 type LibraryItem = {
   id: string;
@@ -37,7 +39,7 @@ function dueColor(days: number) {
 
 function MaterialIcon({ type }: { type: LibraryItem["file_type"] }) {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#14b8a6]" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+    <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#8B1E2D]" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
       {type === "pdf" ? (
         <>
           <path d="M7 3h7l5 5v13H7z" />
@@ -55,6 +57,7 @@ function MaterialIcon({ type }: { type: LibraryItem["file_type"] }) {
 
 export default function HomeworkPage() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [homeworks, setHomeworks] = useState<Homework[]>([]);
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
@@ -67,7 +70,7 @@ export default function HomeworkPage() {
   useEffect(() => {
     setMounted(true);
     fetchData();
-  }, []);
+  }, [session]);
 
   async function fetchData() {
     const accessToken = (session as any)?.accessToken;
@@ -116,15 +119,24 @@ export default function HomeworkPage() {
   }
 
   const role = session?.user?.role;
-  const homework = homeworks[0]; // Display the latest homework
+  const homework = homeworks[0];
   const days = homework ? daysRemaining(homework.due_date) : 0;
 
   if (loading) return <p className="p-10 text-gray-400">Loading homework...</p>;
 
   if (role === "TEACHER" || role === "ADMIN") {
     return (
-      <main className="min-h-screen bg-gray-950 text-white">
-        <h1 className="text-3xl font-black">Homework Submissions</h1>
+      <main className="min-h-screen bg-gray-950 text-white p-8">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-black">Homework Submissions</h1>
+          <button
+            onClick={() => router.push("/teacher/homework")}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#8B1E2D] text-white rounded-2xl hover:bg-[#6d1723] transition-colors font-bold"
+          >
+            <Plus className="h-5 w-5" />
+            Add Homework
+          </button>
+        </div>
         <div className="mt-6 space-y-3">
           {submissions.length === 0 ? (
             <p className="text-gray-400">No submissions found.</p>
@@ -152,7 +164,7 @@ export default function HomeworkPage() {
   }
 
   return (
-    <main className="grid min-h-screen gap-6 bg-gray-950 text-white xl:grid-cols-[40%_minmax(0,60%)]">
+    <main className="grid min-h-screen gap-6 bg-gray-950 text-white p-6 xl:grid-cols-[40%_minmax(0,60%)]">
       <section className="rounded-3xl border border-gray-800 bg-gray-900 p-6">
         <h1 className="text-2xl font-bold">Reference Materials</h1>
         <div className="mt-5 space-y-3">
@@ -160,7 +172,7 @@ export default function HomeworkPage() {
             <p className="text-gray-400 text-sm italic">No materials found.</p>
           ) : (
             libraryItems.map((item) => (
-              <button key={item.id} onClick={() => setSelectedItem(item)} className={`flex w-full items-center gap-3 rounded-2xl border p-3 text-left ${selectedItem?.id === item.id ? "border-[#14b8a6] bg-[#14b8a6]/10" : "border-gray-800 bg-gray-950"}`}>
+              <button key={item.id} onClick={() => setSelectedItem(item)} className={`flex w-full items-center gap-3 rounded-2xl border p-3 text-left ${selectedItem?.id === item.id ? "border-[#8B1E2D] bg-[#8B1E2D]/10" : "border-gray-800 bg-gray-950"}`}>
                 <MaterialIcon type={item.file_type} />
                 <span className="font-semibold">{item.title}</span>
               </button>
@@ -190,7 +202,8 @@ export default function HomeworkPage() {
         </div>
 
         <textarea
-          className="mt-6 min-h-[300px] w-full rounded-2xl bg-white p-8 font-serif text-gray-950 shadow-2xl outline-none"
+          className="mt-6 min-h-[300px] w-full rounded-2xl bg-gray-950 border border-gray-800 p-8 text-white placeholder-gray-500 shadow-2xl outline-none focus:border-[#8B1E2D] focus:ring-2 focus:ring-[#8B1E2D]/50"
+          style={{ backgroundColor: '#030712 !important', color: '#ffffff !important' }}
           placeholder="Write your homework answer here..."
           disabled={submitted}
           value={answer}
@@ -201,7 +214,7 @@ export default function HomeworkPage() {
           {submitted ? (
             <span className="rounded-full bg-green-500/10 px-4 py-2 font-bold text-green-400">Submitted</span>
           ) : (
-            <button onClick={submitHomework} className="rounded-2xl bg-[#14b8a6] px-6 py-3 font-bold text-white hover:bg-teal-400">Submit</button>
+            <button onClick={submitHomework} className="rounded-2xl bg-[#8B1E2D] px-6 py-3 font-bold text-white hover:bg-[#6d1723] transition-colors">Submit</button>
           )}
         </div>
       </section>

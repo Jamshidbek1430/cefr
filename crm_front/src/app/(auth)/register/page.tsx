@@ -54,7 +54,7 @@ export default function RegisterPage() {
         setPendingRegistration(values);
         setVerificationCode("");
         setVerificationError("");
-        toast.success("Verification step ready. Ask admin for your 6-digit code.");
+        toast.success("Verification step ready. Ask admin for your verification code.");
     }
 
     async function handleVerify(event: React.FormEvent<HTMLFormElement>) {
@@ -65,9 +65,9 @@ export default function RegisterPage() {
             return;
         }
 
-        const normalizedCode = verificationCode.replace(/\D/g, "").slice(0, 6);
-        if (normalizedCode.length !== 6) {
-            setVerificationError("Verification code must be exactly 6 digits");
+        const trimmedCode = verificationCode.trim();
+        if (trimmedCode.length === 0) {
+            setVerificationError("Verification code is required");
             return;
         }
 
@@ -83,7 +83,7 @@ export default function RegisterPage() {
                 body: JSON.stringify({
                     full_name: pendingRegistration.fullName,
                     telegram_username: telegramUsername,
-                    verification_code: normalizedCode,
+                    verification_code: trimmedCode,
                     password: pendingRegistration.password,
                 }),
             });
@@ -113,7 +113,7 @@ export default function RegisterPage() {
                 toast.error("Account created, but automatic login failed. Please sign in manually.");
                 router.push("/login");
             } else {
-                toast.success("Welcome to KOMIL_CEFR!");
+                toast.success("Welcome to ARTUR.TURKCE!");
                 router.push("/dashboard");
                 router.refresh();
             }
@@ -137,11 +137,11 @@ export default function RegisterPage() {
                         {verificationMode ? <ShieldCheck className="h-10 w-10 text-secondary" /> : <Sparkles className="h-10 w-10 text-secondary" />}
                     </div>
                     <h1 className="mb-2 text-4xl font-black tracking-tight">
-                        {verificationMode ? "Verify Your Account" : "Join KOMIL_CEFR"}
+                        {verificationMode ? "Verify Your Account" : "Join ARTUR.TURKCE"}
                     </h1>
                     <p className="text-lg text-muted-foreground">
                         {verificationMode
-                            ? "Ask your admin for the 6-digit verification code, then enter it below."
+                            ? "Ask your admin for the verification code, then enter it below."
                             : "Create your account with your full name and Telegram username."}
                     </p>
                 </div>
@@ -170,7 +170,7 @@ export default function RegisterPage() {
                                                 <FormControl>
                                                     <div className="relative">
                                                         <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                                                        <Input placeholder="Komil Karimov" {...field} disabled={isLoading} className="h-12 bg-background/40 pl-10 transition-all" />
+                                                        <Input placeholder="Artur Karimov" {...field} disabled={isLoading} className="h-12 bg-background/40 pl-10 transition-all" />
                                                     </div>
                                                 </FormControl>
                                                 <FormMessage />
@@ -241,27 +241,25 @@ export default function RegisterPage() {
                         ) : (
                             <form onSubmit={handleVerify} className="space-y-4">
                                 <div className="rounded-2xl border border-primary/15 bg-primary/5 p-4 text-sm text-muted-foreground">
-                                    Ask your verification code from admin.
+                                    Ask your verification code from admin. Code can contain letters, numbers, and symbols.
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                                        6-Digit Verification Code
+                                        Verification Code
                                     </label>
                                     <div className="relative">
                                         <KeyRound className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                         <Input
                                             type="text"
-                                            placeholder="483729"
-                                            inputMode="numeric"
+                                            placeholder="Enter code (e.g., ABC123, xyz@789)"
                                             autoComplete="one-time-code"
-                                            maxLength={6}
                                             value={verificationCode}
                                             onChange={(event) => {
-                                                setVerificationCode(event.target.value.replace(/\D/g, "").slice(0, 6));
+                                                setVerificationCode(event.target.value);
                                                 if (verificationError) setVerificationError("");
                                             }}
                                             disabled={isLoading}
-                                            className="h-14 bg-background/40 pl-10 text-center text-2xl tracking-[0.2em] transition-all"
+                                            className="h-14 bg-background/40 pl-10 text-lg transition-all"
                                         />
                                     </div>
                                     {verificationError ? (
@@ -306,7 +304,7 @@ export default function RegisterPage() {
 
                 <div className="flex items-center justify-center gap-8 opacity-50 grayscale transition-all duration-500 hover:grayscale-0">
                     <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest">
-                        <GraduationCap className="h-4 w-4" /> KOMIL_CEFR
+                        <GraduationCap className="h-4 w-4" /> ARTUR.TURKCE
                     </div>
                 </div>
             </div>

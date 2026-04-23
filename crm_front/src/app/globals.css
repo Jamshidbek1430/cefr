@@ -55,24 +55,24 @@
   --card-foreground: oklch(0.12 0.02 240);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.12 0.02 240);
-  --primary: oklch(0.55 0.2 250); /* Deep Vibrant Blue */
+  --primary: oklch(0.35 0.15 15); /* Deep Red #8B1E2D */
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.65 0.15 180); /* Emerald Green */
   --secondary-foreground: oklch(1 0 0);
   --muted: oklch(0.92 0.01 220);
   --muted-foreground: oklch(0.4 0.02 240);
-  --accent: oklch(0.9 0.05 250 / 15%);
-  --accent-foreground: oklch(0.55 0.2 250);
+  --accent: oklch(0.95 0.02 15 / 15%);
+  --accent-foreground: oklch(0.35 0.15 15);
   --destructive: oklch(0.55 0.18 25);
   --border: oklch(0.9 0.02 240);
   --input: oklch(0.9 0.02 240);
-  --ring: oklch(0.55 0.2 250 / 40%);
+  --ring: oklch(0.35 0.15 15 / 40%);
   --sidebar: oklch(0.98 0.01 220);
   --sidebar-foreground: oklch(0.12 0.02 240);
-  --sidebar-primary: oklch(0.55 0.2 250);
+  --sidebar-primary: oklch(0.35 0.15 15);
   --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.94 0.02 220);
-  --sidebar-accent-foreground: oklch(0.55 0.2 250);
+  --sidebar-accent-foreground: oklch(0.35 0.15 15);
   --sidebar-border: oklch(0.9 0.02 240);
 }
 
@@ -83,18 +83,18 @@
   --card-foreground: oklch(0.95 0.01 220);
   --popover: oklch(0.12 0.02 240);
   --popover-foreground: oklch(0.95 0.01 220);
-  --primary: oklch(0.6 0.18 250);
+  --primary: oklch(0.4 0.15 15);
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.7 0.16 180);
   --secondary-foreground: oklch(0.08 0.02 240);
   --muted: oklch(0.15 0.02 240);
   --muted-foreground: oklch(0.65 0.02 220);
-  --accent: oklch(0.25 0.1 250 / 25%);
+  --accent: oklch(0.2 0.08 15 / 25%);
   --accent-foreground: oklch(0.7 0.16 180);
   --destructive: oklch(0.45 0.15 25);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 10%);
-  --ring: oklch(0.6 0.18 250 / 50%);
+  --ring: oklch(0.4 0.15 15 / 50%);
   --sidebar: oklch(0.1 0.02 240);
   --sidebar-foreground: oklch(0.95 0.01 220);
   --sidebar-accent: oklch(1 0 0 / 8%);
@@ -120,6 +120,12 @@
       transform: translateY(0);
     }
   }
+
+  /* Mobile touch improvements */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 @layer base {
@@ -129,6 +135,8 @@
 
   body {
     @apply bg-background text-foreground font-sans tracking-tight;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1,
@@ -139,4 +147,33 @@
   h6 {
     @apply tracking-tighter font-black;
   }
+
+  /* Improve mobile input handling */
+  input,
+  textarea,
+  select,
+  button {
+    @apply touch-manipulation;
+  }
+
+  /* Prevent zoom on input focus on iOS */
+  @media screen and (max-width: 768px) {
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="tel"],
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Ensure clickable elements have proper touch targets */
+  button,
+  a,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
+

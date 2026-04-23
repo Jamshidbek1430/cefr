@@ -13,7 +13,7 @@ export async function POST(req: Request) {
             },
             body: JSON.stringify({
                 full_name: body.full_name,
-                telegram_username: body.telegram_username,
+                username: body.telegram_username,
                 verification_code: body.verification_code,
                 password: body.password,
             }),

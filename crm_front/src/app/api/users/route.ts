@@ -1,69 +1,68 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { apiFetch } from "@/lib/api";
+import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-type BackendUser = {
-    id: string;
-    username?: string;
-    full_name?: string;
-    telegram_username?: string;
-    email?: string;
-    photo?: string | null;
-    role?: string;
-};
-type BackendUsersResponse = BackendUser[] | { results?: BackendUser[] };
-type SessionWithToken = {
-    user?: { id?: string; role?: string };
-    accessToken?: string;
-};
+const SECRET = process.env.NEXTAUTH_SECRET || "artur-turkce-fallback-secret-key-2024";
 
-function mapBackendRole(role?: string): "ADMIN" | "TEACHER" | "STUDENT" {
-    if (role === "admin" || role === "branch_admin") return "ADMIN";
-    if (role === "teacher") return "TEACHER";
-    return "STUDENT";
+export async function GET(req: NextRequest) {
+  try {
+    let token = await getToken({ req, secret: SECRET, secureCookie: true });
+
+    if (!token) {
+      token = await getToken({ req, secret: SECRET, secureCookie: false });
+    }
+
+    if (!token) {
+      console.error("[/api/users] No token found with either cookie");
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    return handleUsers(req, token);
+
+  } catch (error: any) {
+    console.error("[/api/users] Error:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
 
-export async function GET(req: Request) {
-    try {
-        const session = await getServerSession(authOptions) as SessionWithToken | null;
-        if (!session?.user) {
-            return new NextResponse("Unauthorized", { status: 401 });
-        }
+async function handleUsers(req: NextRequest, token: any) {
+  const accessToken = token.accessToken as string;
+  if (!accessToken) {
+    console.error("[/api/users] No accessToken in token, keys:", Object.keys(token));
+    return new NextResponse("No access token", { status: 401 });
+  }
 
-        const accessToken = session.accessToken;
-        const { searchParams } = new URL(req.url);
+  console.log("[/api/users] Token found! role:", token.role);
 
-        const role = searchParams.get("role");
-        const search = searchParams.get("search");
-        const groupId = searchParams.get("groupId");
+  const { searchParams } = new URL(req.url);
+  const apiUrl = process.env.API_URL || "http://localhost:8000";
+  const url = `${apiUrl}/api/users/?${searchParams.toString()}`;
 
-        // Construct Django query params
-        const params = new URLSearchParams();
-        if (role) params.append("role", role.toLowerCase());
-        if (search) params.append("search", search);
-        if (groupId) params.append("group", groupId); // Django expects 'group'
+  const response = await fetch(url, {
+    headers: {
+      "Authorization": `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  });
 
-        const djangoUsers = await apiFetch(`/api/users/?${params.toString()}`, {
-            accessToken
-        }) as BackendUsersResponse;
+  if (!response.ok) {
+    const err = await response.text();
+    console.error("[/api/users] Django error:", response.status, err);
+    return NextResponse.json({ error: err }, { status: response.status });
+  }
 
-        const usersList = Array.isArray(djangoUsers) ? djangoUsers : djangoUsers.results || [];
+  const django = await response.json();
+  const list = django.results || django || [];
 
-        // Map Django fields to frontend expected fields
-        const mappedUsers = usersList.map((u) => ({
-            id: u.id,
-            name: u.full_name || u.username,
-            email: u.email || (u.telegram_username ? `@${u.telegram_username}` : undefined),
-            image: u.photo,
-            role: mapBackendRole(u.role),
-            teacherId: u.id, // Fallback
-        }));
+  const users = list.map((u: any) => ({
+    id: u.id,
+    name: u.full_name || u.username || u.first_name || u.email?.split("@")[0] || "Unknown",
+    email: u.email || u.phone_number || "-",
+    image: u.photo || null,
+    role: u.role === "admin" || u.role === "branch_admin" ? "ADMIN"
+        : u.role === "teacher" ? "TEACHER" : "STUDENT",
+  }));
 
-        return NextResponse.json(mappedUsers);
-    } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : "Internal Error";
-        console.error("Error fetching users proxy:", message);
-        return new NextResponse(message, { status: 500 });
-    }
+  console.log(`[/api/users] Returning ${users.length} users`);
+  return NextResponse.json(users);
 }

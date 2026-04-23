@@ -108,6 +108,7 @@ export const authOptions: NextAuthOptions = {
             },
         }),
     ],
+    secret: process.env.NEXTAUTH_SECRET || "artur-turkce-fallback-secret-key-2024",
     callbacks: {
         async signIn({ user, account }) {
             if (account?.provider === "credentials") {

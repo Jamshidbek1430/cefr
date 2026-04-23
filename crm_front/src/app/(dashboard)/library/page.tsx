@@ -1,8 +1,11 @@
 "use client";
+import { useTranslation } from 'react-i18next';
+import '@/i18n';
 
 import { type FormEvent, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 type LibraryItem = {
   id: string;
@@ -46,28 +49,57 @@ function FileIcon({ type }: { type: LibraryItem["file_type"] }) {
   );
 }
 
-import { useRouter } from "next/navigation";
-
-function LibrarySection({ title, items }: { title: string; items: LibraryItem[] }) {
+function LibrarySection({
+  title,
+  items,
+  role,
+  onDelete
+}: {
+  title: string;
+  items: LibraryItem[];
+  role?: string;
+  onDelete: (id: string) => void;
+}) {
   const router = useRouter();
+  const isTeacherOrAdmin = role === "TEACHER" || role === "ADMIN";
+
   return (
     <section className="space-y-4">
       <h2 className="text-2xl font-bold text-white">{title}</h2>
       {items.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-gray-800 bg-gray-900 p-6 text-gray-400">No files found.</div>
+        <div className="rounded-3xl border border-dashed border-gray-800 bg-gray-900 p-6 text-gray-400">
+          Fayllar topilmadi
+        </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {items?.map((item) => (
             <div
               key={item.id}
-              onClick={() => router.push(`/library/${item.id}`)}
-              className="text-left rounded-3xl border border-gray-800 bg-gray-900 p-5 transition hover:-translate-y-1 hover:opacity-80 hover:border-[#14b8a6] cursor-pointer"
+              className="relative group rounded-3xl border border-gray-800 bg-gray-900 p-5 transition hover:-translate-y-1 hover:border-[#8B1E2D] cursor-pointer"
             >
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-950">
-                <FileIcon type={item.file_type} />
+              {isTeacherOrAdmin && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    onDelete(item.id);
+                  }}
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 
+                             bg-red-600 hover:bg-red-700 text-white rounded-full 
+                             w-8 h-8 flex items-center justify-center transition-all z-10"
+                  title="O'chirish"
+                >
+                  ✕
+                </button>
+              )}
+              
+              <div onClick={() => router.push(`/library/${item.id}`)}>
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-950">
+                  <FileIcon type={item.file_type} />
+                </div>
+                <h3 className="mt-4 text-lg font-bold text-white">{item.title}</h3>
+                <p className="mt-2 text-sm text-gray-400">{item.uploaded_at}</p>
               </div>
-              <h3 className="mt-4 text-lg font-bold text-white">{item.title}</h3>
-              <p className="mt-2 text-sm text-gray-400">{item.uploaded_at}</p>
             </div>
           ))}
         </div>
@@ -77,6 +109,7 @@ function LibrarySection({ title, items }: { title: string; items: LibraryItem[] 
 }
 
 export default function LibraryPage() {
+  const { t } = useTranslation('common');
   const { data: session, status } = useSession();
   const [mounted, setMounted] = useState(false);
   const [query, setQuery] = useState("");
@@ -87,7 +120,7 @@ export default function LibraryPage() {
   useEffect(() => {
     setMounted(true);
     fetchLibrary();
-  }, []);
+  }, [session]);
 
   async function fetchLibrary() {
     const accessToken = (session as any)?.accessToken;
@@ -103,12 +136,33 @@ export default function LibraryPage() {
     }
   }
 
+  async function handleDelete(id: string) {
+    if (!confirm("Bu faylni o'chirmoqchimisiz?")) return;
+
+    try {
+      const res = await fetch(`/api/library/${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        alert("Fayl o'chirildi!");
+        fetchLibrary();
+      } else {
+        alert("O'chirishda xatolik!");
+      }
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("O'chirishda xatolik!");
+    }
+  }
+
   if (!mounted || status === "loading") {
     return null;
   }
 
   const role = session?.user?.role;
-  const filterByQuery = (list: LibraryItem[]) => list.filter((item) => item.title.toLowerCase().includes(query.toLowerCase()));
+  const filterByQuery = (list: LibraryItem[]) =>
+    list.filter((item) => item.title.toLowerCase().includes(query.toLowerCase()));
 
   const pdfs = filterByQuery(libraryData.pdfs);
   const audio = filterByQuery(libraryData.audio);
@@ -119,7 +173,6 @@ export default function LibraryPage() {
     const accessToken = (session as any)?.accessToken;
     const raw = new FormData(event.currentTarget);
 
-    // Build multipart formData (real file upload)
     const formData = new FormData();
     formData.append("title", String(raw.get("title") || ""));
     formData.append("file_type", String(raw.get("file_type") || "pdf"));
@@ -133,7 +186,7 @@ export default function LibraryPage() {
     }
 
     try {
-      const res = await fetch("http://localhost:8000/api/library/", {
+      const res = await fetch("/api/library", {
         method: "POST",
         headers: { Authorization: `Bearer ${accessToken}` },
         body: formData,
@@ -147,55 +200,91 @@ export default function LibraryPage() {
     }
   }
 
-  if (loading) return <p className="p-10 text-gray-400">Loading library...</p>;
+  if (loading) return <p className="p-10 text-gray-400">Kutubxona yuklanmoqda...</p>;
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
       <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h1 className="text-3xl font-black">Library</h1>
-          <p className="mt-2 text-gray-400">Search class PDFs, audio, and image materials.</p>
+          <h1 className="text-3xl font-black">Kutubxona</h1>
+          <p className="mt-2 text-gray-400">PDF, audio va rasm materiallarini qidiring.</p>
         </div>
         {(role === "TEACHER" || role === "ADMIN") && (
-          <button onClick={() => setUploadOpen(true)} className="rounded-2xl bg-[#14b8a6] px-5 py-3 font-bold text-white hover:bg-teal-400">
-            Upload File
+          <button
+            onClick={() => setUploadOpen(true)}
+            className="rounded-2xl bg-[#8B1E2D] px-5 py-3 font-bold text-white hover:bg-[#A52335]"
+          >
+            Fayl yuklash
           </button>
         )}
       </div>
 
-      <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by title..." className="mb-8 w-full max-w-xl rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3 text-white outline-none focus:border-[#14b8a6]" />
+      <input
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+        placeholder="Sarlavha bo'yicha qidirish..."
+        className="mb-8 w-full max-w-xl rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3 text-white outline-none focus:border-[#8B1E2D]"
+      />
 
       <div className="space-y-8">
-        <LibrarySection title="PDFs" items={pdfs} />
-        <LibrarySection title="Audio" items={audio} />
-        <LibrarySection title="Images" items={images} />
+        <LibrarySection title={t('library.pdfs')} items={pdfs} role={role} onDelete={handleDelete} />
+        <LibrarySection title="Audio" items={audio} role={role} onDelete={handleDelete} />
+        <LibrarySection title="Rasmlar" items={images} role={role} onDelete={handleDelete} />
       </div>
 
       {uploadOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setUploadOpen(false)}>
-          <form onSubmit={submitUpload} onClick={(event) => event.stopPropagation()} className="w-full max-w-lg rounded-3xl border border-gray-800 bg-gray-900 p-6">
-            <h2 className="text-2xl font-bold">Upload File</h2>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setUploadOpen(false)}
+        >
+          <form
+            onSubmit={submitUpload}
+            onClick={(event) => event.stopPropagation()}
+            className="w-full max-w-lg rounded-3xl border border-gray-800 bg-gray-900 p-6"
+          >
+            <h2 className="text-2xl font-bold">Fayl yuklash</h2>
             <label className="mt-5 block">
-              <span className="text-sm font-semibold text-gray-300">Title</span>
-              <input name="title" required className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#14b8a6]" />
+              <span className="text-sm font-semibold text-gray-300">Sarlavha</span>
+              <input
+                name="title"
+                required
+                className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#8B1E2D]"
+              />
             </label>
             <label className="mt-4 block">
-              <span className="text-sm font-semibold text-gray-300">File type</span>
-              <select name="file_type" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#14b8a6]">
+              <span className="text-sm font-semibold text-gray-300">Fayl turi</span>
+              <select
+                name="file_type"
+                className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#8B1E2D]"
+              >
                 <option value="pdf">PDF</option>
                 <option value="audio">Audio</option>
-                <option value="image">Image</option>
+                <option value="image">Rasm</option>
               </select>
             </label>
             <label className="mt-4 block">
-              <span className="text-sm font-semibold text-gray-300">Upload File</span>
-              <input type="file" name="file" accept=".pdf,audio/*,image/*" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#14b8a6] text-gray-400" />
+              <span className="text-sm font-semibold text-gray-300">Fayl yuklash</span>
+              <input
+                type="file"
+                name="file"
+                accept=".pdf,audio/*,image/*"
+                className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 text-gray-400 outline-none focus:border-[#8B1E2D]"
+              />
             </label>
             <label className="mt-4 block">
-              <span className="text-sm font-semibold text-gray-300">Or paste URL</span>
-              <input name="file_url" placeholder="https://..." className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#14b8a6]" />
+              <span className="text-sm font-semibold text-gray-300">Yoki URL kiriting</span>
+              <input
+                name="file_url"
+                placeholder="https://..."
+                className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#8B1E2D]"
+              />
             </label>
-            <button type="submit" className="mt-6 rounded-2xl bg-[#14b8a6] px-6 py-3 font-bold text-white hover:bg-teal-400">Submit</button>
+            <button
+              type="submit"
+              className="mt-6 rounded-2xl bg-[#8B1E2D] px-6 py-3 font-bold text-white hover:bg-[#A52335]"
+            >
+              Yuborish
+            </button>
           </form>
         </div>
       )}

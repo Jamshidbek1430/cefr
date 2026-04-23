@@ -11,11 +11,14 @@ class Homework(Basemodel):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='homeworks', verbose_name="Dars", blank=True, null=True)
     description = models.TextField(null=True, blank=True, verbose_name="Tavsif")
     video = models.ForeignKey('Video', on_delete=models.SET_NULL, related_name='linked_homeworks', blank=True, null=True)
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='created_homeworks', verbose_name="O'qituvchi", null=True, blank=True)
+    students = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='assigned_homeworks', verbose_name="O'quvchilar", blank=True)
+    subject = models.CharField(max_length=255, blank=True, null=True, verbose_name="Fan")
 
     class Meta:
         verbose_name = "Uy vazifasi"
         verbose_name_plural = "Uy vazifalari"
-        ordering = ['due_date', 'created_at']
+        ordering = ['-due_date', '-created_at']
 
     def __str__(self):
         return self.title
@@ -39,26 +42,26 @@ class HomeworkSubmission(Basemodel):
     student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='homework_submissions')
     answer = models.TextField()
     submitted_at = models.DateTimeField(auto_now_add=True)
-    is_submitted = models.BooleanField(default=True)
+    is_submitted = models.BooleanField(default=False, verbose_name="Topshirildi")
 
     class Meta:
-        unique_together = ('homework', 'student')
-        ordering = ['-submitted_at']
-        verbose_name = "Homework submission"
-        verbose_name_plural = "Homework submissions"
+        verbose_name = "Uy vazifasi topshirig'i"
+        verbose_name_plural = "Uy vazifasi topshiriqlari"
+        unique_together = ['homework', 'student']
 
     def __str__(self):
-        return f"{self.student} - {self.homework}"
+        return f"{self.student} - {self.homework.title}"
+
 
 class Video(Basemodel):
     title = models.CharField(max_length=255, verbose_name="Sarlavha")
-    video = models.FileField(upload_to="videos/", blank=True, null=True, verbose_name="Video fayl")
-    video_url = models.URLField(blank=True, default="", verbose_name="Video URL")
-    url = models.URLField(blank=True, default="", verbose_name="Legacy Video URL")
+    video = models.FileField(upload_to='videos/', blank=True, null=True, verbose_name="Video fayl")
+    video_url = models.URLField(blank=True, null=True, verbose_name="Video URL")
+    url = models.URLField(blank=True, null=True, verbose_name="URL")
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='uploaded_videos')
-    uploaded_at = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name="Yuklangan sana")
-    homework = models.ForeignKey(Homework, null=True, blank=True, on_delete=models.SET_NULL, related_name='videos')
-    date = models.DateTimeField(auto_now_add=True, verbose_name="Sana")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    date = models.DateField(blank=True, null=True)
+    homework = models.ForeignKey(Homework, on_delete=models.SET_NULL, null=True, blank=True, related_name='videos')
 
     class Meta:
         verbose_name = "Video"
@@ -68,19 +71,21 @@ class Video(Basemodel):
     def __str__(self):
         return self.title
 
+
 class LibraryItem(Basemodel):
-    FILE_TYPES = (
+    TYPE_CHOICES = [
         ('pdf', 'PDF'),
         ('audio', 'Audio'),
-        ('image', 'Rasm'),
-    )
-    type = models.CharField(max_length=10, choices=FILE_TYPES, verbose_name="Tur", blank=True, default='pdf')
-    file_type = models.CharField(max_length=10, choices=FILE_TYPES, verbose_name="Fayl turi", blank=True, default='pdf')
+        ('image', 'Image'),
+    ]
+    
     title = models.CharField(max_length=255, verbose_name="Sarlavha")
-    file = models.FileField(upload_to="library/", blank=True, null=True, verbose_name="Fayl")
-    file_url = models.URLField(verbose_name="Fayl URL", blank=True, default="")
+    file = models.FileField(upload_to='library/', blank=True, null=True, verbose_name="Fayl")
+    file_url = models.URLField(blank=True, null=True, verbose_name="Fayl URL")
+    file_type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='pdf', verbose_name="Fayl turi")
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='pdf', verbose_name="Turi")
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='uploaded_library_items')
-    uploaded_at = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name="Yuklangan sana")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = "Kutubxona elementi"
@@ -90,8 +95,3 @@ class LibraryItem(Basemodel):
     def __str__(self):
         return self.title
 
-auditlog.register(Homework)
-auditlog.register(Submission)
-auditlog.register(HomeworkSubmission)
-auditlog.register(Video)
-auditlog.register(LibraryItem)

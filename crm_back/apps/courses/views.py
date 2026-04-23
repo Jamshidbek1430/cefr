@@ -24,16 +24,21 @@ class HomeworkViewSet(viewsets.ModelViewSet):
     search_fields = ["title", "instructions", "description"]
 
     def get_queryset(self):
-        queryset = Homework.objects.select_related("lesson", "video").prefetch_related("homework_submissions").order_by("due_date", "created_at")
+        queryset = Homework.objects.select_related("lesson", "video", "teacher").prefetch_related("homework_submissions", "students").order_by("-due_date", "-created_at")
         user = self.request.user
         if user.role == "teacher":
-            return queryset.filter(lesson__teacher=user)
+            return queryset.filter(teacher=user)
+        elif user.role == "student":
+            return queryset.filter(students=user)
         return queryset
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context["request"] = self.request
         return context
+
+    def perform_create(self, serializer):
+        serializer.save(teacher=self.request.user)
 
     @action(detail=True, methods=["post"], url_path="submit")
     def submit(self, request, pk=None):
@@ -110,6 +115,15 @@ class VideoViewSet(viewsets.ModelViewSet):
                 lesson.recorded_video_url = resolved_url
             lesson.save(update_fields=["video_uploaded", "recorded_video_url", "updated_at"])
 
+    def destroy(self, request, *args, **kwargs):
+        # Delete video - only teachers and admins
+        if request.user.role not in ['teacher', 'admin']:
+            return Response(
+                {'error': 'Faqat teacher va admin o\'chirira oladi'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().destroy(request, *args, **kwargs)
+
 class LibraryItemView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
@@ -141,3 +155,25 @@ class LibraryItemView(APIView):
             serializer.save(uploaded_by=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LibraryItemDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk):
+        if request.user.role not in ["admin", "teacher"]:
+            return Response(
+                {"detail": "Only teachers and admins can delete files"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        try:
+            item = LibraryItem.objects.get(pk=pk)
+            item.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except LibraryItem.DoesNotExist:
+            return Response(
+                {"detail": "File not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+

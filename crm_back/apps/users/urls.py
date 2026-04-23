@@ -15,6 +15,7 @@ urlpatterns = [
     path("export/", UsersExportAPIView.as_view(), name="users-export"),
     path("export/template/", UsersTemplateAPIView.as_view(), name="users-export-template"),
     path("import/", UsersImportAPIView.as_view(), name="users-import"),
-    path("<int:pk>/", AdminUserUpdateView.as_view(), name="user-detail"),
-    path("<int:user_id>/change-password/", AdminChangeUserPasswordAPIView.as_view(), name="admin-change-user-password"),
+    path("<uuid:pk>/", AdminUserUpdateView.as_view(), name="user-detail"),
+    path("<uuid:user_id>/change-password/", AdminChangeUserPasswordAPIView.as_view(), name="admin-change-user-password"),
 ]
+

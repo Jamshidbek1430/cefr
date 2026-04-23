@@ -44,7 +44,7 @@ if DEBUG:
     ALLOWED_HOSTS.append('*')   # Safe only in development
 
 # CSRF_TRUSTED_ORIGINS - This is the #1 reason for 400 on POST/login in production
-CSRF_TRUSTED_ORIGINS = _env_list("CSRF_TRUSTED_ORIGINS", "https://komilcefr.org,https://www.komilcefr.org")
+CSRF_TRUSTED_ORIGINS = _env_list("CSRF_TRUSTED_ORIGINS", "https://arturturkce.online,https://www.arturturkce.online")
 
 # ====================== APPS & MIDDLEWARE ======================
 INSTALLED_APPS = [
@@ -84,7 +84,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",   # Must be near the top
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'csp.middleware.CSPMiddleware',
+    # 'csp.middleware.CSPMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -141,12 +141,15 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ),
+    "DEFAULT_PERMISSION_CLASSES": [],  # Allow views to set their own permissions
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",
         "rest_framework.filters.OrderingFilter",
-    ]
+    ],
+    "EXCEPTION_HANDLER": "config.exception_handler.custom_exception_handler",
 }
 
 # ====================== SIMPLE JWT ======================

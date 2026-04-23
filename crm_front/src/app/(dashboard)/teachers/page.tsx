@@ -86,7 +86,7 @@ export default function TeachersPage() {
           <h1 className="text-3xl font-black">Teachers</h1>
           <p className="mt-2 text-gray-400">Manage teacher accounts.</p>
         </div>
-        <button onClick={() => setModalOpen(true)} className="rounded-2xl bg-[#14b8a6] px-5 py-3 font-bold text-white hover:bg-teal-400">Add Teacher</button>
+        <button onClick={() => setModalOpen(true)} className="rounded-2xl bg-[#8B1E2D] px-5 py-3 font-bold text-white hover:bg-[#8B1E2D]">Add Teacher</button>
       </div>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -97,7 +97,7 @@ export default function TeachersPage() {
         ) : (
           teachers.map((teacher) => (
             <article key={teacher.id} className="rounded-3xl border border-gray-800 bg-gray-900 p-5">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#14b8a6]/10 text-xl font-black text-[#14b8a6]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#8B1E2D]/10 text-xl font-black text-[#8B1E2D]">
                 {teacher.full_name?.[0] || "?"}
               </div>
               <h2 className="mt-4 text-xl font-bold">{teacher.full_name}</h2>
@@ -116,17 +116,17 @@ export default function TeachersPage() {
             <h2 className="text-2xl font-bold">Add Teacher</h2>
             <label className="mt-5 block">
               <span className="text-sm font-semibold text-gray-300">Full name</span>
-              <input name="full_name" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#14b8a6]" />
+              <input name="full_name" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#8B1E2D]" />
             </label>
             <label className="mt-4 block">
               <span className="text-sm font-semibold text-gray-300">Telegram username</span>
-              <input name="telegram_username" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#14b8a6]" placeholder="@username" />
+              <input name="telegram_username" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#8B1E2D]" placeholder="@username" />
             </label>
             <label className="mt-4 block">
               <span className="text-sm font-semibold text-gray-300">Temporary password</span>
-              <input type="password" name="temporary_password" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#14b8a6]" />
+              <input type="password" name="temporary_password" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#8B1E2D]" />
             </label>
-            <button className="mt-6 rounded-2xl bg-[#14b8a6] px-6 py-3 font-bold text-white hover:bg-teal-400">Submit</button>
+            <button className="mt-6 rounded-2xl bg-[#8B1E2D] px-6 py-3 font-bold text-white hover:bg-[#8B1E2D]">Submit</button>
           </form>
         </div>
       )}

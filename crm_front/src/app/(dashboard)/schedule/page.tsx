@@ -33,7 +33,7 @@ export default function SchedulePage() {
   useEffect(() => {
     setMounted(true);
     fetchLessons();
-  }, []);
+  }, [session]);
 
   async function fetchLessons() {
     const accessToken = (session as any)?.accessToken;
@@ -138,11 +138,11 @@ export default function SchedulePage() {
           <p className="mt-2 text-gray-400">Manage monthly live lessons.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={() => setMonth(new Date(year, monthIndex - 1, 1))} className="rounded-2xl border border-gray-800 px-4 py-3 hover:border-[#14b8a6]">Prev</button>
+          <button onClick={() => setMonth(new Date(year, monthIndex - 1, 1))} className="rounded-2xl border border-gray-800 px-4 py-3 hover:border-[#8B1E2D]">Prev</button>
           <span className="rounded-2xl border border-gray-800 bg-gray-900 px-5 py-3 font-bold">
             {month.toLocaleDateString([], { month: "long", year: "numeric" })}
           </span>
-          <button onClick={() => setMonth(new Date(year, monthIndex + 1, 1))} className="rounded-2xl border border-gray-800 px-4 py-3 hover:border-[#14b8a6]">Next</button>
+          <button onClick={() => setMonth(new Date(year, monthIndex + 1, 1))} className="rounded-2xl border border-gray-800 px-4 py-3 hover:border-[#8B1E2D]">Next</button>
         </div>
       </div>
 
@@ -155,12 +155,12 @@ export default function SchedulePage() {
           {days?.map((day) => {
             const lesson = lessons.find((item) => dateKey(item.scheduled_at) === dateKey(day));
             return (
-              <button key={day.toISOString()} onClick={() => openDay(day)} className="min-h-24 rounded-2xl border border-gray-800 bg-gray-950 p-3 text-left hover:border-[#14b8a6]">
+              <button key={day.toISOString()} onClick={() => openDay(day)} className="min-h-24 rounded-2xl border border-gray-800 bg-gray-950 p-3 text-left hover:border-[#8B1E2D]">
                 <div className="flex items-center justify-between">
                   <span className="font-bold">{day.getDate()}</span>
-                  {lesson && <span className="h-2.5 w-2.5 rounded-full bg-[#14b8a6]" />}
+                  {lesson && <span className="h-2.5 w-2.5 rounded-full bg-[#8B1E2D]" />}
                 </div>
-                {lesson && <p className="mt-3 truncate text-sm text-[#14b8a6]">{lesson.title}</p>}
+                {lesson && <p className="mt-3 truncate text-sm text-[#8B1E2D]">{lesson.title}</p>}
               </button>
             );
           })}
@@ -169,27 +169,27 @@ export default function SchedulePage() {
 
       {selectedDate && (
         <aside className="fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-gray-800 bg-gray-950 p-6 shadow-2xl">
-          <button onClick={() => setSelectedDate(null)} className="mb-6 rounded-2xl border border-gray-800 px-4 py-2 hover:border-[#14b8a6]">Close</button>
+          <button onClick={() => setSelectedDate(null)} className="mb-6 rounded-2xl border border-gray-800 px-4 py-2 hover:border-[#8B1E2D]">Close</button>
           <h2 className="text-2xl font-black">{selectedLesson ? "Edit lesson" : "Add lesson"}</h2>
           <p className="mt-2 text-gray-400">{selectedDate.toDateString()}</p>
 
           <div className="mt-6 space-y-5">
             <label className="block">
               <span className="text-sm font-semibold text-gray-300">Title</span>
-              <input value={title} onChange={(event) => setTitle(event.target.value)} className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3 outline-none focus:border-[#14b8a6]" />
+              <input value={title} onChange={(event) => setTitle(event.target.value)} className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3 outline-none focus:border-[#8B1E2D]" />
             </label>
             <label className="block">
               <span className="text-sm font-semibold text-gray-300">Time</span>
-              <input type="time" value={time} onChange={(event) => setTime(event.target.value)} className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3 outline-none focus:border-[#14b8a6]" />
+              <input type="time" value={time} onChange={(event) => setTime(event.target.value)} className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3 outline-none focus:border-[#8B1E2D]" />
             </label>
             <label className="block">
               <span className="text-sm font-semibold text-gray-300">YouTube URL</span>
-              <input value={youtubeUrl} onChange={(event) => setYoutubeUrl(event.target.value)} className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3 outline-none focus:border-[#14b8a6]" />
+              <input value={youtubeUrl} onChange={(event) => setYoutubeUrl(event.target.value)} className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3 outline-none focus:border-[#8B1E2D]" />
             </label>
           </div>
 
           <div className="mt-8 flex gap-3">
-            <button onClick={saveLesson} className="flex-1 rounded-2xl bg-[#14b8a6] px-5 py-3 font-bold text-white hover:bg-teal-400">{selectedLesson ? "Save" : "Add"}</button>
+            <button onClick={saveLesson} className="flex-1 rounded-2xl bg-[#8B1E2D] px-5 py-3 font-bold text-white hover:bg-[#8B1E2D]">{selectedLesson ? "Save" : "Add"}</button>
             {selectedLesson && <button onClick={deleteLesson} className="rounded-2xl bg-red-600 px-5 py-3 font-bold text-white hover:bg-red-500">Delete</button>}
           </div>
         </aside>

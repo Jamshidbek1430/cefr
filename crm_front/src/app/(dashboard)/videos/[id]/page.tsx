@@ -12,6 +12,7 @@ type Video = {
   created_at: string;
   teacher_name?: string;
   video_url?: string;
+  upload_date?: string;
 };
 
 export default function VideoDetailPage() {
@@ -48,6 +49,7 @@ export default function VideoDetailPage() {
   }
 
   const role = session?.user?.role;
+  const isStudent = role === "STUDENT";
 
   if (loading)
     return <p className="p-10 text-gray-400">Loading video...</p>;
@@ -55,22 +57,24 @@ export default function VideoDetailPage() {
   if (!video)
     return <p className="p-10 text-gray-400">Video not found.</p>;
 
+  const videoDate = video.upload_date || video.created_at;
+
   return (
     <main className="min-h-screen bg-gray-950 text-white p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Link
           href="/videos"
-          className="inline-flex rounded-2xl border border-gray-800 px-4 py-2 text-sm font-semibold text-gray-300 hover:border-[#14b8a6] hover:text-white"
+          className="inline-flex rounded-2xl border border-gray-800 px-4 py-2 text-sm font-semibold text-gray-300 hover:border-[#8B1E2D] hover:text-white"
         >
-          Back to videos
+          ← Videolarga qaytish
         </Link>
 
         {(role === "TEACHER" || role === "ADMIN") && (
           <Link
             href="/videos/upload"
-            className="inline-flex rounded-2xl bg-[#14b8a6] px-4 py-2 text-sm font-bold text-white hover:bg-teal-400"
+            className="inline-flex rounded-2xl bg-[#8B1E2D] px-4 py-2 text-sm font-bold text-white hover:bg-[#A52335]"
           >
-            Upload Video
+            Video yuklash
           </Link>
         )}
       </div>
@@ -79,16 +83,18 @@ export default function VideoDetailPage() {
         <h1 className="text-3xl font-black">{video.title}</h1>
 
         <p className="mt-2 text-gray-400">
-          {video.teacher_name || "Teacher"} -{" "}
-          {video.created_at
-            ? new Date(video.created_at).toLocaleDateString()
-            : "No date"}
+          {video.teacher_name || "O'qituvchi"} -{" "}
+          {videoDate ? new Date(videoDate).toLocaleDateString() : "Sana yo'q"}
         </p>
 
-        <div className="mt-6 aspect-video overflow-hidden rounded-3xl border border-gray-800 bg-black">
+        <div 
+          className="mt-6 aspect-video overflow-hidden rounded-3xl border border-gray-800 bg-black relative"
+          onContextMenu={(e) => isStudent && e.preventDefault()}
+        >
           {video.video_url ? (
             video.video_url.includes("youtube.com") ||
-              video.video_url.includes("youtu.be") ? (
+            video.video_url.includes("youtu.be") ||
+            video.video_url.includes("vdo.ninja") ? (
               <iframe
                 src={video.video_url.replace("watch?v=", "embed/")}
                 title={video.title}
@@ -101,12 +107,14 @@ export default function VideoDetailPage() {
                 key={video.video_url}
                 src={video.video_url}
                 controls
+                controlsList={isStudent ? "nodownload" : undefined}
                 className="h-full w-full"
+                onContextMenu={(e) => isStudent && e.preventDefault()}
               />
             )
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400">
-              No video available
+              Video mavjud emas
             </div>
           )}
         </div>

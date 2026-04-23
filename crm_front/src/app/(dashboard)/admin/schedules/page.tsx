@@ -32,7 +32,7 @@ export default function SchedulesPage() {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [session]);
 
     const fetchData = async () => {
         const accessToken = (session as any)?.accessToken;

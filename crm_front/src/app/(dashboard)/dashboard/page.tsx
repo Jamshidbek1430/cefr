@@ -85,26 +85,26 @@ function NextLessonCountdown({ session }: { session: any }) {
   return (
     <div className="flex h-full flex-col justify-between gap-6">
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-500/70">Next lesson</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#8B1E2D]/70">Next lesson</p>
         <h3 className="mt-3 text-2xl font-black italic tracking-tighter text-white uppercase">{lesson.title}</h3>
       </div>
 
       <div className={cn(
         "rounded-[2rem] border p-6 text-center shadow-2xl transition-all duration-500",
-        isLive ? "bg-teal-950/30 border-teal-500/30 shadow-teal-500/10" : "bg-gray-950/70 border-gray-800/50"
+        isLive ? "bg-teal-950/30 border-[#8B1E2D]/30 shadow-[#8B1E2D]/10" : "bg-gray-950/70 border-gray-800/50"
       )}>
         {isLive ? (
           <div className="space-y-5">
             <div className="inline-flex items-center gap-2 rounded-full bg-red-500 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white animate-pulse">
               SESSION ACTIVE
             </div>
-            <Button asChild className="w-full h-14 rounded-2xl bg-teal-500 text-lg font-black text-white hover:bg-teal-400 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-teal-500/20">
+            <Button asChild className="w-full h-14 rounded-2xl bg-[#8B1E2D] text-lg font-black text-white hover:bg-[#8B1E2D] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-teal-500/20">
               <Link href="/live">JOIN SESSION</Link>
             </Button>
           </div>
         ) : isSoon ? (
           <div className="space-y-3">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-400 animate-pulse">Starting soon</p>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8B1E2D] animate-pulse">Starting soon</p>
             <p className="text-5xl font-black tracking-tighter text-white tabular-nums">
               {pad(m)}:{pad(s)}
             </p>
@@ -149,7 +149,7 @@ export default function DashboardPage() {
     return (
       <div className="space-y-6">
         <div className="px-2 md:px-0">
-          <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-teal-500/70">KOMIL_CEFR system</p>
+          <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-[#8B1E2D]/70">ARTUR.TURKCE system</p>
           <h1 className="mt-2 text-3xl md:text-4xl font-black tracking-tight text-white">Welcome back.</h1>
           <p className="mt-2 text-sm md:text-base text-gray-400 font-medium">
             Your progress at a glance • Attendance, homework, and live lessons.
@@ -257,7 +257,7 @@ export default function DashboardPage() {
         students={mockStudents}
         action={
           role === "ADMIN" ? (
-            <Button asChild className="h-11 rounded-2xl bg-teal-500 text-white hover:bg-teal-400">
+            <Button asChild className="h-11 rounded-2xl bg-[#8B1E2D] text-white hover:bg-[#8B1E2D]">
               <Link href="/teachers">
                 <Plus className="h-4 w-4" />
                 Add Teacher

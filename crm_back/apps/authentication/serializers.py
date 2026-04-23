@@ -40,7 +40,7 @@ class LoginSerializer(serializers.Serializer):
 class PublicRegisterSerializer(serializers.ModelSerializer):
     username = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True, min_length=6)
-    verification_code = serializers.CharField(write_only=True, max_length=6)
+    verification_code = serializers.CharField(write_only=True, max_length=20)
 
     class Meta:
         model = User
@@ -67,8 +67,8 @@ class PublicRegisterSerializer(serializers.ModelSerializer):
 
     def validate_verification_code(self, value):
         normalized = value.strip()
-        if not normalized.isdigit() or len(normalized) != 6:
-            raise serializers.ValidationError("Verification code must be 6 digits.")
+        if not normalized:
+            raise serializers.ValidationError("Verification code is required.")
         return normalized
 
     def create(self, validated_data):
@@ -82,9 +82,6 @@ class PublicRegisterSerializer(serializers.ModelSerializer):
             if not code:
                 raise serializers.ValidationError({"verification_code": "invalid code"})
             
-            if code.is_used:
-                raise serializers.ValidationError({"verification_code": "code already used"})
-
             user = User.objects.create_user(
                 username=validated_data["username"],
                 full_name=validated_data.get("full_name", ""),
@@ -93,7 +90,6 @@ class PublicRegisterSerializer(serializers.ModelSerializer):
                 password=validated_data["password"],
             )
 
-            code.is_used = True
-            code.save(update_fields=["is_used"])
+            # Code is reusable - do not mark as used
 
         return user

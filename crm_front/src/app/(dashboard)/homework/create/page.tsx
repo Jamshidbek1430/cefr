@@ -31,17 +31,17 @@ export default function CreateHomeworkPage() {
         <form onSubmit={onSubmit} className="mt-6 space-y-5">
           <label className="block">
             <span className="text-sm font-semibold text-gray-300">Title</span>
-            <input className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 text-white outline-none focus:border-[#14b8a6]" />
+            <input className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 text-white outline-none focus:border-[#8B1E2D]" />
           </label>
           <label className="block">
             <span className="text-sm font-semibold text-gray-300">Instructions</span>
-            <textarea className="mt-2 min-h-40 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 text-white outline-none focus:border-[#14b8a6]" />
+            <textarea className="mt-2 min-h-40 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 text-white outline-none focus:border-[#8B1E2D]" />
           </label>
           <label className="block">
             <span className="text-sm font-semibold text-gray-300">Due date</span>
-            <input type="datetime-local" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 text-white outline-none focus:border-[#14b8a6]" />
+            <input type="datetime-local" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 text-white outline-none focus:border-[#8B1E2D]" />
           </label>
-          <button className="rounded-2xl bg-[#14b8a6] px-6 py-3 font-bold text-white hover:bg-teal-400">Submit</button>
+          <button className="rounded-2xl bg-[#8B1E2D] px-6 py-3 font-bold text-white hover:bg-[#8B1E2D]">Submit</button>
         </form>
         {saved && <p className="mt-5 rounded-2xl border border-green-500/30 bg-green-500/10 p-4 text-green-300">Homework created.</p>}
       </section>

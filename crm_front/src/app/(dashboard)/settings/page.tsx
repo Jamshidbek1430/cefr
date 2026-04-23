@@ -45,17 +45,17 @@ export default function SettingsPage() {
           <form onSubmit={onSubmit} className="mt-5 space-y-4">
             <label className="block">
               <span className="text-sm font-semibold text-gray-300">Current password</span>
-              <input type="password" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#14b8a6]" />
+              <input type="password" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#8B1E2D]" />
             </label>
             <label className="block">
               <span className="text-sm font-semibold text-gray-300">New password</span>
-              <input type="password" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#14b8a6]" />
+              <input type="password" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#8B1E2D]" />
             </label>
             <label className="block">
               <span className="text-sm font-semibold text-gray-300">Confirm password</span>
-              <input type="password" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#14b8a6]" />
+              <input type="password" className="mt-2 w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 outline-none focus:border-[#8B1E2D]" />
             </label>
-            <button className="rounded-2xl bg-[#14b8a6] px-6 py-3 font-bold text-white hover:bg-teal-400">Save</button>
+            <button className="rounded-2xl bg-[#8B1E2D] px-6 py-3 font-bold text-white hover:bg-[#8B1E2D]">Save</button>
           </form>
           {saved && <p className="mt-5 rounded-2xl border border-green-500/30 bg-green-500/10 p-4 text-green-300">Password settings saved.</p>}
         </section>
